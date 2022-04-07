@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>467302315890-291cno30550ana6d2ptata5qob3l7mhh.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.467302315890-291cno30550ana6d2ptata5qob3l7mhh</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBee5KP9wG48vaeZagKZMjx_Sn3nYp4D3Y</string>
+	<key>GCM_SENDER_ID</key>
+	<string>467302315890</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.Ripple</string>
+	<key>PROJECT_ID</key>
+	<string>ripple-96a9c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ripple-96a9c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:467302315890:ios:1b47f607a451af50044feb</string>
+	<key>DATABASE_URL</key>
+	<string>https://ripple-96a9c-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
