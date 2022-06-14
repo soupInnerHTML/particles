@@ -1,10 +1,25 @@
-class UserModel {
-  public name: string;
-  public email: string;
+interface IUserModelWithoutId {
+  name: string;
+  email: string;
+  postsOwner?: string[];
+  avatar?: string;
+}
 
-  constructor(name: string, email: string) {
-    this.name = name;
-    this.email = email;
+export type IUserModel = IWithId<IUserModelWithoutId>;
+
+class UserModel implements IUserModel {
+  public name!: string;
+  public email!: string;
+  public id!: string;
+  public postsOwner?: string[];
+  public avatar?: string;
+
+  constructor(params: IUserModel) {
+    let key: keyof IUserModel;
+    for (key in params) {
+      // @ts-ignore
+      this[key] = params[key];
+    }
   }
 }
 
