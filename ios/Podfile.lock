@@ -507,6 +507,10 @@ PODS:
   - HMSegmentedControl (1.5.6)
   - leveldb-library (1.22.1)
   - libevent (2.1.12)
+  - lottie-ios (3.2.3)
+  - lottie-react-native (5.1.3):
+    - lottie-ios (~> 3.2.3)
+    - React-Core
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -738,6 +742,8 @@ PODS:
   - React-jsinspector (0.68.0)
   - React-logger (0.68.0):
     - glog
+  - react-native-lottie-splash-screen (0.1.14):
+    - React
   - React-perflogger (0.68.0)
   - React-RCTActionSheet (0.68.0):
     - React-Core/RCTActionSheetHeaders (= 0.68.0)
@@ -894,6 +900,7 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (~> 0.11.0)
   - libevent (~> 2.1.12)
+  - lottie-react-native (from `../node_modules/lottie-react-native`)
   - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -911,6 +918,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-lottie-splash-screen (from `../node_modules/react-native-lottie-splash-screen`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -963,6 +971,7 @@ SPEC REPOS:
     - HMSegmentedControl
     - leveldb-library
     - libevent
+    - lottie-ios
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
@@ -980,6 +989,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  lottie-react-native:
+    :path: "../node_modules/lottie-react-native"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -1008,6 +1019,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-lottie-splash-screen:
+    :path: "../node_modules/react-native-lottie-splash-screen"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -1085,6 +1098,8 @@ SPEC CHECKSUMS:
   HMSegmentedControl: 34c1f54d822d8308e7b24f5d901ec674dfa31352
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  lottie-ios: c058aeafa76daa4cf64d773554bccc8385d0150e
+  lottie-react-native: a501112fa980529ccb80b9f3ee117a7f98c6af3a
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
@@ -1102,6 +1117,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 010a66edf644339f6da72b34208b070089680415
   React-jsinspector: 90f0bfd5d04e0b066c29216a110ffb9a6c34f23f
   React-logger: 8474fefa09d05f573a13c044cb0dfd751d4e52e3
+  react-native-lottie-splash-screen: 3bc897a60c7d37edaebc2a995f2f40c9a3259fa0
   React-perflogger: 15cb741d6c2379f4d3fc8f9e4d4e1110ef3020cb
   React-RCTActionSheet: ea9099db0597bd769430db1e2d011fd5fdb7fc5e
   React-RCTAnimation: 252df4749866f2654f37612f839522cac91c1165
@@ -1126,6 +1142,6 @@ SPEC CHECKSUMS:
   Yoga: 6671cf077f614314c22fd09ddf87d7abeee64e96
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: ea0e7bc9e69d3d516cc7b72efa8289c1a6da5009
+PODFILE CHECKSUM: bb44cd26250258027a3745ef9a0c7112a46de9ea
 
 COCOAPODS: 1.11.0

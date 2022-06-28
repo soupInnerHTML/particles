@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Ripple.app"
-               BlueprintName = "Ripple"
-               ReferencedContainer = "container:Ripple.xcodeproj">
+               BuildableName = "Particles.app"
+               BlueprintName = "Particles"
+               ReferencedContainer = "container:Particles.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "RippleTests.xctest"
-               BlueprintName = "RippleTests"
-               ReferencedContainer = "container:Ripple.xcodeproj">
+               BuildableName = "ParticlesTests.xctest"
+               BlueprintName = "ParticlesTests"
+               ReferencedContainer = "container:Particles.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Ripple.app"
-            BlueprintName = "Ripple"
-            ReferencedContainer = "container:Ripple.xcodeproj">
+            BuildableName = "Particles.app"
+            BlueprintName = "Particles"
+            ReferencedContainer = "container:Particles.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Ripple.app"
-            BlueprintName = "Ripple"
-            ReferencedContainer = "container:Ripple.xcodeproj">
+            BuildableName = "Particles.app"
+            BlueprintName = "Particles"
+            ReferencedContainer = "container:Particles.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
