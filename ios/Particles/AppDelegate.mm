@@ -1,17 +1,15 @@
 #import "AppDelegate.h"
 
-#import <Firebase.h>
-
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-#import "RNSplashScreen.h" // here
-#import "Particles-Swift.h"
-
-#import <ReactNativeNavigation/ReactNativeNavigation.h>
-
 #import <React/RCTAppSetupUtils.h>
+
+//libs
+#import <Firebase.h>
+#import "RNSplashScreen.h"
+#import "Particles-Swift.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
@@ -22,7 +20,9 @@
 #import <ReactCommon/RCTTurboModuleManager.h>
 
 #import <react/config/ReactNativeConfig.h>
-
+
+static NSString *const kRNConcurrentRoot = @"concurrentRoot";
+
 @interface AppDelegate () <RCTCxxBridgeDelegate, RCTTurboModuleManagerDelegate> {
   RCTTurboModuleManager *_turboModuleManager;
   RCTSurfacePresenterBridgeAdapter *_bridgeAdapter;
@@ -36,55 +36,74 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [ReactNativeNavigation bootstrapWithDelegate:self launchOptions:launchOptions];
-  [FIRApp configure]; //firebase
-//
-//  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-//    RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-//                                                     moduleName:@"Particles"
-//                                              initialProperties:nil];
-  
-  /* here */
-    UIViewController *rootViewController = [UIViewController new];
-  
-  NSURL *jsCodeLocation;
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
- 
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                      moduleName:@"WaterApp"
-                                               initialProperties:nil
-                                                   launchOptions:launchOptions];
+  RCTAppSetupPrepareApp(application);
 
-  
-//  UIViewController *rootViewController = application.keyWindow.rootViewController;
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 
+#if RCT_NEW_ARCH_ENABLED
+  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
+  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
+  _contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
+  _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
+  bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
+#endif
 
-  
-//  UIView *rootView = rootViewController.view;
+  NSDictionary *initProps = [self prepareInitialProps];
+  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"particles", initProps);
 
+  if (@available(iOS 13.0, *)) {
+    rootView.backgroundColor = [UIColor systemBackgroundColor];
+  } else {
+    rootView.backgroundColor = [UIColor whiteColor];
+  }
+
+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
+  self.window.rootViewController = rootViewController;
+  [self.window makeKeyAndVisible];
 
-    self.window.rootViewController = rootViewController;
-    [self.window makeKeyAndVisible];
 
-    Dynamic *t = [Dynamic new];
-    UIView *animationView = (UIView *)[t createAnimationViewWithRootView:rootView lottieName:@"particles"]; // change lottieName to your lottie files name
-    animationView.backgroundColor = [UIColor whiteColor]; // change backgroundColor
+  Dynamic *t = [Dynamic new];
+  UIView *animationUIView = (UIView *)[t createAnimationViewWithRootView:rootView lottieName:@"particles"]; // change lottieName to your lottie files name
+  animationUIView.backgroundColor = [UIColor whiteColor]; // change backgroundColor
 
-    // register LottieSplashScreen to RNSplashScreen
-    [RNSplashScreen showLottieSplash:animationView inRootView:rootView];
-  
-    AnimationView *animatedSplash = (AnimationView *) animationView;
-    // play
-    [t playWithAnimationView:animatedSplash];
+  // register LottieSplashScreen to RNSplashScreen
+  [RNSplashScreen showLottieSplash:animationUIView inRootView:rootView];
 
-    // If you want the animation layout to be forced to remove when hide is called, use this code
-    [RNSplashScreen setAnimationFinished:false];
+  // casting UIView type to AnimationView type
+  AnimationView *animationView = (AnimationView *) animationUIView;
 
-    /* here */
+  // play
+  [t playWithAnimationView:animationView];
 
-  
+  // If you want the animation layout to be forced to remove when hide is called, use this code
+  [RNSplashScreen setAnimationFinished:true];
+
+  [FIRApp configure];
   return YES;
+}
+
+/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
+///
+/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
+/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
+/// @return: `true` if the `concurrentRoot` feture is enabled. Otherwise, it returns `false`.
+- (BOOL)concurrentRootEnabled
+{
+  // Switch this bool to turn on and off the concurrent root
+  return true;
+}
+
+- (NSDictionary *)prepareInitialProps
+{
+  NSMutableDictionary *initProps = [NSMutableDictionary new];
+
+#ifdef RCT_NEW_ARCH_ENABLED
+  initProps[kRNConcurrentRoot] = @([self concurrentRootEnabled]);
+#endif
+
+  return initProps;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
@@ -94,10 +113,6 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
-}
-
-- (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge {
-  return [ReactNativeNavigation extraModulesForBridge:bridge];
 }
 
 #if RCT_NEW_ARCH_ENABLED

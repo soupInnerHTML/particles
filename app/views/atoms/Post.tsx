@@ -1,5 +1,5 @@
 import React from 'react';
-import {IPostModel, IPostModelWithoutId} from '../../models/PostModel';
+import {IPostModel} from '../../models/PostModel';
 import {Text, TouchableOpacity, View} from 'react-native';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -24,7 +24,7 @@ const Post: React.FC<IPostModel> = ({text, date, likes, id}) => {
 
 const styles = ScaledSheet.create({
   post: {
-    margin: '8@vs',
+    marginVertical: '8@vs',
   },
 });
 

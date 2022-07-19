@@ -1,22 +1,21 @@
 import React, {useState} from 'react';
-import {Button, FlatList, ListRenderItem, TextInput} from 'react-native';
+import {Button, ListRenderItem} from 'react-native';
 import {observer} from 'mobx-react-lite';
-import PostsModel from '../models/PostsModel';
-import Post from './library/Post';
-import PostModel from '../models/PostModel';
-import AccountModel from '../models/AccountModel';
+import PostsModel from '../../models/PostsModel';
+import Post from '../atoms/Post';
+import PostModel from '../../models/PostModel';
+import {Input} from '@ui-kitten/components';
 
 const keyExtractor = (item: PostModel) => item.id;
 const renderItem: ListRenderItem<PostModel> = ({item}) => <Post {...item} />;
 const getItem = (data: any, index: number) => data[index];
 const getItemCount = (data: any) => data.length;
 
-const Posts: React.FC = () => {
+const PostsScreen: React.FC = () => {
   const [text, setText] = useState('');
   return (
     <>
-      <Button title={'Sign out'} onPress={AccountModel.signOut} />
-      <TextInput onChange={e => setText(e.nativeEvent.text)} />
+      <Input onChange={e => setText(e.nativeEvent.text)} />
       <Button title={'post'} onPress={() => PostsModel.add({text})} />
       {/*<FlatList*/}
       {/*  refreshing={PostsModel.isPending}*/}
@@ -36,4 +35,4 @@ const Posts: React.FC = () => {
   );
 };
 
-export default observer(Posts);
+export default observer(PostsScreen);

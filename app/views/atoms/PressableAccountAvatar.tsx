@@ -1,0 +1,28 @@
+import {TouchableOpacity} from 'react-native';
+import {Avatar} from '@ui-kitten/components';
+import React from 'react';
+import useAppNavigation from '../../hooks/useAppNavigation';
+
+interface IPressableAccountAvatarProps {
+  image?: string;
+}
+
+const PressableAccountAvatar: React.FC<IPressableAccountAvatarProps> = ({
+  image,
+}) => {
+  const navigation = useAppNavigation();
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.navigate('Account', {screen: 'AccountMain'})}>
+      <Avatar
+        source={{
+          uri:
+            image ??
+            'data:image/jpeg;base64,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',
+        }}
+      />
+    </TouchableOpacity>
+  );
+};
+
+export default PressableAccountAvatar;
