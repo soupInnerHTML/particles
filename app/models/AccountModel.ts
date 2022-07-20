@@ -2,9 +2,10 @@
 import {computed, makeObservable, observable} from 'mobx';
 import {IUserModel} from './UserModel';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {Alert} from 'react-native';
 import ModelWithStatus from './abstract/ModelWithStatus';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import alert from '../utils/alert';
+import parseFirebaseError from '../utils/parseFirebaseError/parseFirebaseError';
 
 export interface IAuth {
   email: string;
@@ -65,6 +66,15 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
     );
   };
 
+  public githubSignIn = async () => {
+    const provider = auth.GithubAuthProvider.credential(
+      '467302315890-rjojkpn1elfp9i4oet8bif2ja0nt1e31.apps.googleusercontent.com',
+      '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',
+    );
+
+    console.log(provider.token);
+  };
+
   private async _tryAuth(
     callback: () => Promise<FirebaseAuthTypes.UserCredential>,
     method = ESignInMethods.SIMPLE,
@@ -74,7 +84,7 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
       this.setStatus('PENDING');
       return await callback();
     } catch (e: any) {
-      Alert.alert(e.toString().replace(/Error: \[.+\]/g, ''));
+      alert(parseFirebaseError(e));
     } finally {
       this.setStatus('DONE');
       this.signMethod = ESignInMethods.NONE;
@@ -93,6 +103,18 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
     this.avatar = user?.photoURL!;
 
     console.log(this);
+  };
+
+  sendPasswordResetEmail = async (params: IAuth) => {
+    try {
+      this.setStatus('PENDING');
+      await auth().sendPasswordResetEmail(params.email);
+      alert('Email was sent on your address');
+    } catch (e: any) {
+      alert(parseFirebaseError(e));
+    } finally {
+      this.setStatus('DONE');
+    }
   };
 
   constructor() {

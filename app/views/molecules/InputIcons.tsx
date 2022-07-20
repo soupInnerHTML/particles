@@ -4,7 +4,6 @@ import Row from '../atoms/Row';
 import {Icon} from '@ui-kitten/components';
 import {useFormContext} from 'react-hook-form';
 import renderIf from '../../utils/renderIf';
-import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 import SmoothView from '../atoms/SmoothView';
 
 interface IInputIconsProps {
@@ -24,8 +23,7 @@ const InputIcons: FC<IInputIconsProps> = ({
 }) => {
   const {setValue, getValues} = useFormContext();
   const isNotEmpty = getValues()[name];
-  return renderIf(
-    isNotEmpty,
+  return renderIf(isNotEmpty, () => (
     <SmoothView>
       <Row>
         <TouchableOpacity onPress={() => setValue(name, '')}>
@@ -37,8 +35,8 @@ const InputIcons: FC<IInputIconsProps> = ({
           </TouchableOpacity>
         )}
       </Row>
-    </SmoothView>,
-  );
+    </SmoothView>
+  ));
 };
 
 export default InputIcons;

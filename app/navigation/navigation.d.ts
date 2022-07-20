@@ -9,8 +9,9 @@ type RootStackParamList = {
 type NestedStack<Stack> = {screen: keyof Stack; params?: Stack[keyof Stack]};
 
 type LoginStackParamList = {
-  SignIn: {foo: 'bar'};
-  SignUp: {bar: 'foo'};
+  SignIn: undefined;
+  SignUp: undefined;
+  ResetPassword: undefined;
 };
 
 type MainStackParamList = {

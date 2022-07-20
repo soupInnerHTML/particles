@@ -1,7 +1,7 @@
 import React from 'react';
 import {
+  KeyboardAvoidingView,
   KeyboardTypeOptions,
-  StyleSheet,
   TextInputAndroidProps,
   TextInputIOSProps,
   TouchableOpacity,
@@ -10,7 +10,7 @@ import {
 import AccountModel, {IAuth} from '../../models/AccountModel';
 import {observer} from 'mobx-react-lite';
 import {ScaledSheet} from 'react-native-size-matters';
-import {Button, Text, useTheme} from '@ui-kitten/components';
+import {Button, Text} from '@ui-kitten/components';
 import {EvaStatus} from '@ui-kitten/components/devsupport';
 import LoadingIndicator from '../atoms/LoadingIndicator';
 import Row from '../atoms/Row';
@@ -20,6 +20,7 @@ import renderIf from '../../utils/renderIf';
 import {FormProvider, useForm} from 'react-hook-form';
 import ControlledInput from '../organisms/ControlledInput';
 import {yupResolver} from '@hookform/resolvers/yup';
+import {useHeaderHeight} from '@react-navigation/elements';
 
 interface IAuthFormProps {
   fields: {
@@ -34,13 +35,14 @@ interface IAuthFormProps {
     title: string;
     type?: EvaStatus;
   };
-  link: {
+  link?: {
     text: string;
     labelText: string;
     linkTo: 'SignIn' | 'SignUp';
   };
   onSubmit: (params: IAuth) => void;
   schema: any;
+  resetPassword?: boolean;
 }
 
 const AuthForm: React.FC<IAuthFormProps> = ({
@@ -49,6 +51,7 @@ const AuthForm: React.FC<IAuthFormProps> = ({
   onSubmit,
   link,
   schema,
+  resetPassword,
 }) => {
   const navigation = useAppNavigation();
   const methods = useForm<IAuth>({
@@ -56,58 +59,90 @@ const AuthForm: React.FC<IAuthFormProps> = ({
     resolver: yupResolver(schema),
   });
 
+  const headerHeight = useHeaderHeight();
+
   return (
-    <FormProvider {...methods}>
-      {fields.map(field => (
-        <ControlledInput
-          autoComplete={field.autoComplete}
-          textContentType={field.textContentType}
-          name={field.name}
-          control={methods.control}
-          secureTextEntry={field.secure}
-          size={'large'}
-          key={field.name}
-          placeholder={field.placeholder}
-          keyboardType={field.type}
-          style={styles.input}
-        />
-      ))}
-      <View style={styles.submit}>
-        <Row style={styles.mb8}>
-          <Text category={'h6'}>{link.labelText}</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Login', {screen: link.linkTo})}>
-            <Text category={'h6'} status={'primary'}>
-              &nbsp;{link.text}
-            </Text>
-          </TouchableOpacity>
-        </Row>
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={'padding'}
+      keyboardVerticalOffset={headerHeight}>
+      <FormProvider {...methods}>
+        {fields.map(field => (
+          <ControlledInput
+            autoComplete={field.autoComplete}
+            textContentType={field.textContentType}
+            name={field.name}
+            control={methods.control}
+            secureTextEntry={field.secure}
+            size={'large'}
+            key={field.name}
+            placeholder={field.placeholder}
+            keyboardType={field.type}
+            style={styles.input}
+          />
+        ))}
+        <View style={styles.submit}>
+          {renderIf(link, () => (
+            <Row>
+              <Text category={'h6'}>{link!.labelText}</Text>
+              <TouchableOpacity
+                style={!resetPassword && styles.mb8}
+                onPress={() =>
+                  navigation.navigate('Login', {screen: link!.linkTo})
+                }>
+                <Text category={'h6'} status={'primary'}>
+                  &nbsp;{link!.text}
+                </Text>
+              </TouchableOpacity>
+            </Row>
+          ))}
+          {renderIf(resetPassword, () => (
+            <TouchableOpacity
+              style={styles.mb8}
+              onPress={() => navigation.navigate('ResetPassword')}>
+              <Text category={'h6'} appearance={'hint'}>
+                Forgot password?
+              </Text>
+            </TouchableOpacity>
+          ))}
 
-        <Button
-          disabled={AccountModel.isPending}
-          accessoryRight={renderIf(
-            AccountModel.isGoogleSignIn,
-            <LoadingIndicator />,
-          )}
-          onPress={AccountModel.googleSignIn}
-          status={'basic'}
-          style={styles.mb8}
-          accessoryLeft={() => <GoogleIcon width={23} height={23} />}>
-          Google sign in
-        </Button>
+          <Button
+            disabled={AccountModel.isPending}
+            accessoryRight={renderIf(AccountModel.isGoogleSignIn, () => (
+              <LoadingIndicator />
+            ))}
+            onPress={AccountModel.googleSignIn}
+            status={'basic'}
+            style={styles.mb8}
+            accessoryLeft={() => <GoogleIcon width={23} height={23} />}>
+            Google sign in
+          </Button>
 
-        <Button
-          status={button.type}
-          accessoryRight={renderIf(
-            AccountModel.isSimpleSignIn,
-            <LoadingIndicator />,
-          )}
-          disabled={AccountModel.isPending}
-          onPress={methods.handleSubmit(() => onSubmit(methods.getValues()))}>
-          {button.title}
-        </Button>
-      </View>
-    </FormProvider>
+          {/*<Button*/}
+          {/*  disabled={AccountModel.isPending}*/}
+          {/*  accessoryRight={renderIf(AccountModel.isGoogleSignIn, () => (*/}
+          {/*    <LoadingIndicator />*/}
+          {/*  ))}*/}
+          {/*  onPress={AccountModel.githubSignIn}*/}
+          {/*  status={'basic'}*/}
+          {/*  style={styles.mb8}*/}
+          {/*  // accessoryLeft={() => <GoogleIcon width={23} height={23} />}*/}
+          {/*>*/}
+          {/*  Github sign in*/}
+          {/*</Button>*/}
+
+          <Button
+            status={button.type}
+            accessoryRight={renderIf(AccountModel.isSimpleSignIn, () => (
+              <LoadingIndicator />
+            ))}
+            disabled={AccountModel.isPending}
+            onPress={methods.handleSubmit(() => onSubmit(methods.getValues()))}>
+            {button.title}
+          </Button>
+        </View>
+      </FormProvider>
+    </KeyboardAvoidingView>
   );
 };
 

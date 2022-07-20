@@ -5,11 +5,10 @@ import AccountModel from '../../models/AccountModel';
 import {StackItem} from '../../navigation/navigation';
 import * as yup from 'yup';
 import {ref} from 'yup/es';
+import {defaultSchema} from './SignInFormScreen';
 
 const schema = yup.object({
-  email: yup.string().required().email(),
   name: yup.string().required(),
-  password: yup.string().required().min(6),
   repeatPassword: yup
     .string()
     .required()
@@ -24,7 +23,7 @@ const MyComponent: FC<StackItem<'SignUp'>> = () => {
   return (
     <View style={{flex: 1}}>
       <AuthForm
-        schema={schema}
+        schema={defaultSchema.concat(schema)}
         fields={[
           {name: 'email', placeholder: 'Email', type: 'email-address'},
           {name: 'name', placeholder: 'Name'},

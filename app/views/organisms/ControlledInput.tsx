@@ -47,8 +47,7 @@ const ControlledInput: FC<InputProps & Omit<ControllerProps, 'render'>> = ({
             onChange={e => onChange(e.nativeEvent.text)}
             {...{onBlur, value}}
           />
-          {renderIf(
-            error?.message,
+          {renderIf(error?.message, () => (
             <SmoothView>
               <Row style={styles.text}>
                 <Icon
@@ -62,8 +61,8 @@ const ControlledInput: FC<InputProps & Omit<ControllerProps, 'render'>> = ({
                   {' ' + normalizeText(error?.message!)}
                 </Text>
               </Row>
-            </SmoothView>,
-          )}
+            </SmoothView>
+          ))}
         </View>
       )}
       name={name}

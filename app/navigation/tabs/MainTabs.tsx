@@ -1,18 +1,17 @@
 import React, {FC} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Posts from '../../views/screens/PostsScreen';
-import {MainStackParamList} from '../navigation';
 import PressableAccountAvatar from '../../views/atoms/PressableAccountAvatar';
 import withContainer from '../../hoc/withContainer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {observer} from 'mobx-react-lite';
 import AccountModel from '../../models/AccountModel';
+import TopNavigationHeader from '../header/TopNavigationHeader';
+import AddPostScreen from '../../views/screens/AddPostScreen';
 
-const Stack = createNativeStackNavigator<MainStackParamList>();
 const Tab = createBottomTabNavigator();
 
 const MainTabs: React.FC = () => {
-  const MainStackComponents: React.ComponentProps<typeof Stack.Screen>[] = [
+  const MainStackComponents: React.ComponentProps<typeof Tab.Screen>[] = [
     {
       name: 'Posts',
       component: Posts,
@@ -22,10 +21,20 @@ const MainTabs: React.FC = () => {
         )),
       },
     },
+    {
+      name: 'AddPost',
+      component: AddPostScreen,
+    },
   ];
 
   return (
-    <Tab.Navigator initialRouteName="Posts">
+    <Tab.Navigator
+      initialRouteName="Posts"
+      screenOptions={{
+        header: ({route, options}) => (
+          <TopNavigationHeader title={route.name} right={options.headerRight} />
+        ),
+      }}>
       {MainStackComponents.map(screen => (
         <Tab.Screen
           key={screen.name}
