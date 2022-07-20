@@ -1,1 +1,1 @@
-react native social network
+react native social network for developers
