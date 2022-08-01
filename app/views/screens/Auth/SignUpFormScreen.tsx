@@ -1,11 +1,12 @@
 import React, {FC} from 'react';
-import AuthForm from '../templates/AuthForm';
+import AuthForm from '../../templates/AuthForm';
 import {View} from 'react-native';
-import AccountModel from '../../models/AccountModel';
-import {StackItem} from '../../navigation/navigation';
+import AccountModel from '../../../models/AccountModel';
+import {StackItem} from '../../../navigation/navigation';
 import * as yup from 'yup';
 import {ref} from 'yup/es';
 import {defaultSchema} from './SignInFormScreen';
+import AuthModel from '../../../models/AuthModel';
 
 const schema = yup.object({
   name: yup.string().required(),
@@ -43,7 +44,7 @@ const MyComponent: FC<StackItem<'SignUp'>> = () => {
           text: 'Sign in',
           linkTo: 'SignIn',
         }}
-        onSubmit={AccountModel.signUp}
+        onSubmit={AuthModel.signUp}
       />
     </View>
   );

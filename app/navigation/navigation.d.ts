@@ -19,7 +19,8 @@ type MainStackParamList = {
 };
 
 type AccountStackParamList = {
-  AccountMain: undefined;
+  Profile: undefined;
+  AccountSettings: undefined;
 };
 
 type TabParamList = {};

@@ -1,6 +1,7 @@
 export interface IPostModelWithoutId {
   text?: string;
-  image?: string;
+  images?: string[];
+  videos?: string[];
   likes: string[];
   author: string;
   date: number;
@@ -10,7 +11,8 @@ export type IPostModel = IWithId<IPostModelWithoutId>;
 
 class PostModel implements IPostModel {
   public text!: string;
-  public image!: string;
+  public images = [];
+  public videos = [];
   public likes!: string[];
   public author!: string;
   public id!: string;

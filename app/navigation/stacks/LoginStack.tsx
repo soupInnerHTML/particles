@@ -1,9 +1,9 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import SignUpForm from '../../views/screens/SignUpFormScreen';
-import SignInForm from '../../views/screens/SignInFormScreen';
+import SignUpForm from '../../views/screens/Auth/SignUpFormScreen';
+import SignInForm from '../../views/screens/Auth/SignInFormScreen';
 import {LoginStackParamList} from '../navigation';
-import ResetPasswordScreen from '../../views/screens/ResetPasswordScreen';
+import ResetPasswordScreen from '../../views/screens/Auth/ResetPasswordScreen';
 import TopNavigationHeader from '../header/TopNavigationHeader';
 import commonStackStyles from '../style/commonStackStyles';
 

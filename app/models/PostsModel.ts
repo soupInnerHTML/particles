@@ -1,23 +1,43 @@
 import FirestoreModel from './abstract/FirestoreModel';
 import {IPostModel, IPostModelWithoutId} from './PostModel';
 import {makeObservable, override} from 'mobx';
-import {Alert} from 'react-native';
 import {hydrate} from './persist/hydrate';
 import AccountModel from './AccountModel';
+import {showWarning} from '../utils/messages';
+import storage from '@react-native-firebase/storage';
+import {ImagePickerResponse} from 'react-native-image-picker';
+import {v4 as uuidv4} from 'uuid';
 
 @hydrate
 class PostsModel extends FirestoreModel<IPostModel> {
   @override
-  async add(item: IPostModelWithoutId): Promise<void> {
-    if (item.text?.length) {
+  async add(
+    item: Omit<IPostModelWithoutId, 'images'> & {images?: ImagePickerResponse},
+  ): Promise<void> {
+    const images: string[] = [];
+
+    if (item.images) {
+      for (const asset of item.images.assets!) {
+        const ref = await storage().ref(
+          `/posts/${AccountModel.id}/${uuidv4()}`,
+        );
+
+        await ref.putFile(asset.uri!);
+
+        const url = await ref.getDownloadURL();
+        images.push(url);
+      }
+    }
+    if (item.text?.length || images) {
       await super.add({
         ...item,
         likes: <string[]>[],
         author: AccountModel.id!,
         date: Date.now(),
+        images,
       });
     } else {
-      Alert.alert('Add text');
+      showWarning({message: 'Add content'});
     }
   }
 

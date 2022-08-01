@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import AccountModel, {IAuth} from '../../models/AccountModel';
 import {observer} from 'mobx-react-lite';
 import {ScaledSheet} from 'react-native-size-matters';
 import {Button, Text} from '@ui-kitten/components';
@@ -21,6 +20,7 @@ import {FormProvider, useForm} from 'react-hook-form';
 import ControlledInput from '../organisms/ControlledInput';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useHeaderHeight} from '@react-navigation/elements';
+import AuthModel, {IAuth} from '../../models/AuthModel';
 
 interface IAuthFormProps {
   fields: {
@@ -107,11 +107,11 @@ const AuthForm: React.FC<IAuthFormProps> = ({
           ))}
 
           <Button
-            disabled={AccountModel.isPending}
-            accessoryRight={renderIf(AccountModel.isGoogleSignIn, () => (
+            disabled={AuthModel.isPending}
+            accessoryRight={renderIf(AuthModel.isGoogleSignIn, () => (
               <LoadingIndicator />
             ))}
-            onPress={AccountModel.googleSignIn}
+            onPress={AuthModel.googleSignIn}
             status={'basic'}
             style={styles.mb8}
             accessoryLeft={() => <GoogleIcon width={23} height={23} />}>
@@ -133,10 +133,10 @@ const AuthForm: React.FC<IAuthFormProps> = ({
 
           <Button
             status={button.type}
-            accessoryRight={renderIf(AccountModel.isSimpleSignIn, () => (
+            accessoryRight={renderIf(AuthModel.isSimpleSignIn, () => (
               <LoadingIndicator />
             ))}
-            disabled={AccountModel.isPending}
+            disabled={AuthModel.isPending}
             onPress={methods.handleSubmit(() => onSubmit(methods.getValues()))}>
             {button.title}
           </Button>

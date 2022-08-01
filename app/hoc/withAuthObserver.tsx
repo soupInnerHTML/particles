@@ -1,14 +1,14 @@
 import React, {useEffect} from 'react';
-import AccountModel from '../models/AccountModel';
 import {observer} from 'mobx-react-lite';
 import useAppNavigation from '../hooks/useAppNavigation';
 import {useRoute} from '@react-navigation/native';
+import AuthModel from '../models/AuthModel';
 
 const withAuthObserver = (Component: React.FC<any>) =>
   observer((props: any) => {
     const navigation = useAppNavigation();
     const {name} = useRoute();
-    const {isAuthenticated} = AccountModel;
+    const {isAuthenticated} = AuthModel;
     const isComponentMatch = isAuthenticated
       ? name !== 'Login'
       : name === 'Login';

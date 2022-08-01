@@ -27,9 +27,10 @@ function withContainer<
 
 const styles = ScaledSheet.create({
   container: {
-    // marginHorizontal: '16@s',
-    // position: 'relative',
-    // flex: 1,
+    paddingHorizontal: '16@s',
+    position: 'relative',
+    flex: 1,
+    backgroundColor: '#fff',
   },
 });
 

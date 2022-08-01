@@ -1,8 +1,8 @@
 import React, {FC} from 'react';
 import {observer} from 'mobx-react-lite';
-import AuthForm from '../templates/AuthForm';
-import AccountModel from '../../models/AccountModel';
-import {StackItem} from '../../navigation/navigation';
+import AuthForm from '../../templates/AuthForm';
+import AccountModel from '../../../models/AccountModel';
+import {StackItem} from '../../../navigation/navigation';
 import * as yup from 'yup';
 
 export const defaultSchema = yup.object({

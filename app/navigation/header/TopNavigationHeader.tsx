@@ -1,8 +1,14 @@
 import React from 'react';
 import renderIf from '../../utils/renderIf';
 import normalizeText from '../../utils/normalizeText';
-import {Icon, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
+import {
+  Divider,
+  Icon,
+  TopNavigation,
+  TopNavigationAction,
+} from '@ui-kitten/components';
 import useAppNavigation from '../../hooks/useAppNavigation';
+import {ScaledSheet} from 'react-native-size-matters';
 
 const BackAction = () => {
   const navigation = useAppNavigation();
@@ -28,16 +34,26 @@ const Header: React.FC<IHeaderProps> = ({
   right,
 }) => {
   return (
-    <TopNavigation
-      accessoryLeft={renderIf(canGoBack, () => (
-        <BackAction />
-      ))}
-      accessoryRight={right}
-      title={normalizeText(title)}
-      subtitle={normalizeText(subtitle)}
-      alignment={'center'}
-    />
+    <>
+      <TopNavigation
+        style={styles.nav}
+        accessoryLeft={renderIf(canGoBack, () => (
+          <BackAction />
+        ))}
+        accessoryRight={right}
+        title={normalizeText(title)}
+        subtitle={subtitle}
+        alignment={'center'}
+      />
+      <Divider />
+    </>
   );
 };
+
+const styles = ScaledSheet.create({
+  nav: {
+    paddingHorizontal: '8@s',
+  },
+});
 
 export default Header;

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleProp, View, ViewStyle} from 'react-native';
+import {FlexAlignType, StyleProp, View, ViewStyle} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 
 interface IRowProps {
@@ -10,11 +10,21 @@ interface IRowProps {
     | 'space-between'
     | 'space-around'
     | 'space-evenly';
+  alignItems?: FlexAlignType;
   style?: StyleProp<ViewStyle>;
 }
 
-const Row: React.FC<IRowProps> = ({children, justifyContent, style}) => {
-  return <View style={[styles.row, {justifyContent}, style]}>{children}</View>;
+const Row: React.FC<IRowProps> = ({
+  children,
+  justifyContent,
+  alignItems,
+  style,
+}) => {
+  return (
+    <View style={[styles.row, {justifyContent, alignItems}, style]}>
+      {children}
+    </View>
+  );
 };
 
 const styles = ScaledSheet.create({

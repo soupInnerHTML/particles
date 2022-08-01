@@ -6,6 +6,8 @@ import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {SafeAreaView} from 'react-native';
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import FlashMessageRegistry from 'react-native-flash-message';
+import 'react-native-get-random-values';
 
 GoogleSignin.configure();
 
@@ -15,6 +17,7 @@ const App: React.FC = () => {
   }, []);
   return (
     <SafeAreaView style={{flex: 1}}>
+      <FlashMessageRegistry position="top" />
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={eva.light}>
         <RootNavigationContainer />

@@ -1,6 +1,6 @@
 import React from 'react';
-import AuthForm from '../templates/AuthForm';
-import AccountModel from '../../models/AccountModel';
+import AuthForm from '../../templates/AuthForm';
+import AccountModel from '../../../models/AccountModel';
 import {observer} from 'mobx-react-lite';
 import {defaultSchema} from './SignInFormScreen';
 import * as yup from 'yup';

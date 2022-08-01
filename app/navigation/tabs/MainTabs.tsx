@@ -1,12 +1,11 @@
 import React, {FC} from 'react';
-import Posts from '../../views/screens/PostsScreen';
+import Posts from '../../views/screens/Posts/PostsScreen';
 import PressableAccountAvatar from '../../views/atoms/PressableAccountAvatar';
-import withContainer from '../../hoc/withContainer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {observer} from 'mobx-react-lite';
 import AccountModel from '../../models/AccountModel';
 import TopNavigationHeader from '../header/TopNavigationHeader';
-import AddPostScreen from '../../views/screens/AddPostScreen';
+import AddPostScreen from '../../views/screens/Posts/AddPostScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,9 +15,11 @@ const MainTabs: React.FC = () => {
       name: 'Posts',
       component: Posts,
       options: {
-        headerRight: withContainer(() => (
-          <PressableAccountAvatar image={AccountModel.avatar} />
-        )),
+        headerRight: () => (
+          <PressableAccountAvatar
+            image={AccountModel.avatar || AccountModel.avatarPlaceholder}
+          />
+        ),
       },
     },
     {
@@ -39,7 +40,7 @@ const MainTabs: React.FC = () => {
         <Tab.Screen
           key={screen.name}
           {...screen}
-          component={withContainer(screen.component as FC)}
+          component={screen.component as FC}
         />
       ))}
     </Tab.Navigator>
