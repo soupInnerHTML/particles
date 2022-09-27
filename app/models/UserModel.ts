@@ -1,8 +1,12 @@
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+
 interface IUserModelWithoutId {
   name: string;
   email: string;
   postsOwner?: string[];
   avatar?: string;
+  color?: string;
+  lastSeen: FirebaseFirestoreTypes.Timestamp;
 }
 
 export type IUserModel = IWithId<IUserModelWithoutId>;

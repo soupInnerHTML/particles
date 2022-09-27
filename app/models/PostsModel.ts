@@ -15,6 +15,7 @@ class PostsModel extends FirestoreModel<IPostModel> {
     item: Omit<IPostModelWithoutId, 'images'> & {images?: ImagePickerResponse},
   ): Promise<void> {
     const images: string[] = [];
+    const videos: string[] = [];
 
     if (item.images) {
       for (const asset of item.images.assets!) {
@@ -28,6 +29,18 @@ class PostsModel extends FirestoreModel<IPostModel> {
         images.push(url);
       }
     }
+    if (item.videos) {
+      for (const asset of item.videos.assets!) {
+        const ref = await storage().ref(
+          `/posts/${AccountModel.id}/${uuidv4()}`,
+        );
+
+        await ref.putFile(asset.uri!);
+
+        const url = await ref.getDownloadURL();
+        videos.push(url);
+      }
+    }
     if (item.text?.length || images) {
       await super.add({
         ...item,
@@ -35,6 +48,7 @@ class PostsModel extends FirestoreModel<IPostModel> {
         author: AccountModel.id!,
         date: Date.now(),
         images,
+        videos,
       });
     } else {
       showWarning({message: 'Add content'});

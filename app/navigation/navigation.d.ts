@@ -16,10 +16,11 @@ type LoginStackParamList = {
 
 type MainStackParamList = {
   Posts: undefined;
+  Chat: {id: string; name: string};
 };
 
 type AccountStackParamList = {
-  Profile: undefined;
+  Profile: {id?: number};
   AccountSettings: undefined;
 };
 

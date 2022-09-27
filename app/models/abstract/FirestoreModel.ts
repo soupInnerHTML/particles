@@ -31,12 +31,15 @@ abstract class FirestoreModel<LocalModel extends {}> extends ModelWithStatus {
   @action.bound protected _onSnapshot = (
     snapshot: FirebaseFirestoreTypes.QuerySnapshot<LocalModel>,
   ) => {
-    this.data = [];
+    // this.data = [];
+    const prepared: LocalModel[] = [];
     snapshot.forEach(item => {
       if (item.exists) {
-        this.data.push({...item.data(), id: item.id});
+        prepared.push({...item.data(), id: item.id});
       }
     });
+
+    this.data = prepared;
   };
 
   @action.bound protected _onError = (error: Error) => {

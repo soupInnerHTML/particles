@@ -13,6 +13,10 @@ export interface IAuth {
   password: string;
 }
 
+export type ISignUp = IAuth & {
+  name: string;
+};
+
 enum ESignInMethods {
   NONE,
   SIMPLE,
@@ -34,15 +38,21 @@ class AuthModel extends ModelWithStatus {
     return Boolean(AccountModel.id);
   }
 
-  public signUp = async (params: IAuth) => {
+  @action public signUp = async (params: ISignUp) => {
     this.signMethod = ESignInMethods.SIMPLE;
-    const user = await this._tryAuth(() =>
+    const credential = await this._tryAuth(() =>
       auth().createUserWithEmailAndPassword(params.email, params.password),
     );
-    user?.user.updateProfile({displayName: params.name});
     AccountModel.name = params.name;
 
-    user && (await AuthModel._duplicateUserToFirestore(user));
+    if (credential) {
+      await AuthModel._duplicateUserToFirestore({
+        name: AccountModel.name,
+        avatar: AccountModel.avatar || AccountModel.avatarPlaceholder,
+        email: AccountModel.email!,
+        id: AccountModel.id!,
+      });
+    }
   };
 
   public signIn = async (params: IAuth) => {
@@ -52,17 +62,12 @@ class AuthModel extends ModelWithStatus {
     );
   };
 
-  private static async _duplicateUserToFirestore(
-    user: FirebaseAuthTypes.UserCredential,
-  ) {
+  private static async _duplicateUserToFirestore({id, ...user}: IUserModel) {
     await firestore()
       .collection<Omit<IUserModel, 'id'>>('users')
-      .doc(user.user.uid)
+      .doc(id)
       .set({
-        email: user.user.email!,
-        // id: user.user.uid,
-        avatar: user.user.photoURL! || 'orange',
-        name: user.user.displayName!,
+        ...user,
         postsOwner: [],
       });
   }

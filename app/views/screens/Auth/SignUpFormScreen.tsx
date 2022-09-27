@@ -1,7 +1,6 @@
 import React, {FC} from 'react';
 import AuthForm from '../../templates/AuthForm';
 import {View} from 'react-native';
-import AccountModel from '../../../models/AccountModel';
 import {StackItem} from '../../../navigation/navigation';
 import * as yup from 'yup';
 import {ref} from 'yup/es';
