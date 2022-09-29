@@ -1,12 +1,18 @@
 package com.ripple;
 
-import com.reactnativenavigation.NavigationActivity;
+import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import org.devio.rn.splashscreen.SplashScreen; // here
+import android.os.Bundle;
 
-public class MainActivity extends NavigationActivity {
-
-  
+public class MainActivity extends ReactActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+      SplashScreen.show(this, R.id.lottie);
+      SplashScreen.setAnimationFinished(true); // If you want the animation dialog to be forced to close when hide is called, use this code
+      super.onCreate(null);
+    }
 
   /**
    * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and

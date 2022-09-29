@@ -4,5 +4,5 @@ export default function (
   color = 'fff',
   bold = true,
 ) {
-  return `https://eu.ui-avatars.com/api/?name=${name}&background=${background}&color=${color}&bold=${bold}`;
+  return `https://ui-avatars.com/api/?name=${name}&background=${background}&color=${color}&bold=${bold}`;
 }

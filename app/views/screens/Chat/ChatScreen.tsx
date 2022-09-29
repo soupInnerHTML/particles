@@ -71,10 +71,6 @@ const ChatScreen: React.FC<StackItem<'Chat'>> = ({route}) => {
     setAttachedPhotos(actual => [...(actual ?? []), ...(result.assets || [])]);
   }
 
-  useEffect(() => {
-    console.log(attachedPhotos?.length);
-  }, [attachedPhotos]);
-
   return (
     <LayoutView style={{flex: 1}}>
       <Animated.FlatList

@@ -8,7 +8,7 @@ import AuthModel from '../../models/mobx/AuthModel';
 import Ripple from 'react-native-material-ripple';
 import {Avatar, Text, useTheme} from '@ui-kitten/components';
 import generateAvatarPlaceholder from '../../utils/generateAvatarPlaceholder';
-import {View} from 'react-native';
+import {TouchableHighlight, TouchableOpacity, View} from 'react-native';
 import dayjs from 'dayjs';
 import {ScaledSheet} from 'react-native-size-matters';
 import ChipsCounter from '../atoms/ChipsCounter';
@@ -48,7 +48,8 @@ const Chat: React.FC<IChat> = ({members, messageHistory, id}) => {
 
   return companion && AuthModel.isAuthenticated ? (
     <SmoothView>
-      <Ripple
+      <TouchableOpacity
+        activeOpacity={1}
         style={[styles.chat]}
         onPress={() =>
           companion &&
@@ -57,55 +58,61 @@ const Chat: React.FC<IChat> = ({members, messageHistory, id}) => {
             id,
           })
         }>
-        <View>
-          <Avatar
-            source={{
-              uri:
-                companion?.avatar ||
-                generateAvatarPlaceholder(companion?.name, companion?.color),
-            }}
-            style={styles.avatar}
-          />
-          <OnlineStatus online={isOnline} />
-        </View>
-        <View style={styles.chatBody}>
-          <Text>{companion?.name}</Text>
-          <Row alignItems={'baseline'}>
-            {!!lastMessage.photos && (
-              <View style={styles.mediaChips}>
-                <ChipsText>
-                  <Text style={styles.chatMessage}>
-                    {`🖼️ ${lastMessage.photos.length}`}
-                  </Text>
-                </ChipsText>
-              </View>
-            )}
-            <View style={styles.mediaChips}>
-              <ChipsText>
-                <Text style={styles.chatMessage}>{`📹 ${2}`}</Text>
-              </ChipsText>
-            </View>
-            <Text numberOfLines={2} style={styles.chatMessage}>
-              {lastMessage.text}
-            </Text>
-          </Row>
-        </View>
-        <View style={styles.meta}>
-          <Row alignItems={'flex-end'}>
-            {!unreadCount && (
-              <ReadStatusIcon
-                status={lastMessage.status}
-                fill={theme['color-primary-500']}
-                width={16}
-                height={16}
-                marginRight={1}
-              />
-            )}
-            <Text>{relativeTime}</Text>
-          </Row>
-          <ChipsCounter count={unreadCount} />
-        </View>
-      </Ripple>
+        <>
+          <View>
+            <Avatar
+              source={{
+                uri:
+                  companion?.avatar ||
+                  generateAvatarPlaceholder(companion?.name, companion?.color),
+              }}
+              style={styles.avatar}
+            />
+            <OnlineStatus online={isOnline} />
+          </View>
+          <View style={styles.chatBody}>
+            <Text>{companion?.name}</Text>
+            <Row alignItems={'baseline'}>
+              {!!lastMessage.photos && (
+                <View style={styles.mediaChips}>
+                  <ChipsText>
+                    <Text style={styles.chatMessage}>
+                      {`🖼️ ${lastMessage.photos.length} ${
+                        !lastMessage.text ? 'image' : ''
+                      }`}
+                    </Text>
+                  </ChipsText>
+                </View>
+              )}
+              {!!lastMessage.videos && (
+                <View style={styles.mediaChips}>
+                  <ChipsText>
+                    <Text style={styles.chatMessage}>{`📹 ${2}`}</Text>
+                  </ChipsText>
+                </View>
+              )}
+              <Text numberOfLines={2} style={styles.chatMessage}>
+                {lastMessage.text}
+              </Text>
+            </Row>
+          </View>
+          <View style={styles.meta}>
+            <Row alignItems={'flex-end'}>
+              {!unreadCount && (
+                <ReadStatusIcon
+                  status={lastMessage.status}
+                  fill={theme['color-primary-500']}
+                  width={16}
+                  height={16}
+                  marginRight={1}
+                />
+              )}
+              <Text>{relativeTime}</Text>
+            </Row>
+            <ChipsCounter count={unreadCount} />
+          </View>
+        </>
+      </TouchableOpacity>
     </SmoothView>
   ) : (
     <View style={styles.chat}>

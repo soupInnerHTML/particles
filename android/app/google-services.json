@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "467302315890",
+    "firebase_url": "https://ripple-96a9c-default-rtdb.firebaseio.com",
+    "project_id": "ripple-96a9c",
+    "storage_bucket": "ripple-96a9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467302315890:android:c682cec8b6359599044feb",
+        "android_client_info": {
+          "package_name": "com.ripple"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "467302315890-rjojkpn1elfp9i4oet8bif2ja0nt1e31.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFksR59qMfEbo7qDqYKt0_HeLlQZ1h-mY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "467302315890-rjojkpn1elfp9i4oet8bif2ja0nt1e31.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "467302315890-291cno30550ana6d2ptata5qob3l7mhh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.Ripple"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

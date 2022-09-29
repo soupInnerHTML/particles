@@ -22,7 +22,7 @@ export default function (lastSeen: number) {
       } else {
         setIsOnline(false);
         clearInterval(intervalId);
-        console.log('offline');
+        // console.log('offline');
       }
     };
 
