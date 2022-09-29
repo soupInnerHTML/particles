@@ -5,7 +5,7 @@ import {StackItem} from '../../../navigation/navigation';
 import * as yup from 'yup';
 import {ref} from 'yup/es';
 import {defaultSchema} from './SignInFormScreen';
-import AuthModel from '../../../models/AuthModel';
+import AuthModel from '../../../models/mobx/AuthModel';
 
 const schema = yup.object({
   name: yup.string().required(),

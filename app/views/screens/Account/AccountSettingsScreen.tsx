@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 import {Button} from '@ui-kitten/components';
 import {observer} from 'mobx-react-lite';
-import AuthModel from '../../../models/AuthModel';
+import AuthModel from '../../../models/mobx/AuthModel';
 
 const AccountSettingsScreen: React.FC = () => {
   return (

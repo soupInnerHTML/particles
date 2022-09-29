@@ -34,7 +34,7 @@ const Header: React.FC<IHeaderProps> = ({
   right,
 }) => {
   return (
-    <>
+    <React.Fragment>
       <TopNavigation
         style={styles.nav}
         accessoryLeft={renderIf(canGoBack, () => (
@@ -46,7 +46,7 @@ const Header: React.FC<IHeaderProps> = ({
         alignment={'center'}
       />
       <Divider />
-    </>
+    </React.Fragment>
   );
 };
 

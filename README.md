@@ -1,1 +1,1 @@
-react native social network for developers
+react native lightweight messenger

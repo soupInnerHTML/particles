@@ -61,7 +61,7 @@ abstract class FirestoreModel<LocalModel extends {}> extends ModelWithStatus {
 
   protected constructor() {
     super();
-    this._filteredInstance.onSnapshot(this._onSnapshot, this._onError);
+    // this._filteredInstance.onSnapshot(this._onSnapshot, this._onError);
 
     reaction(
       () => this.data.length,
