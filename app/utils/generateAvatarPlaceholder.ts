@@ -6,3 +6,4 @@ export default function (
 ) {
   return `https://ui-avatars.com/api/?name=${name}&background=${background}&color=${color}&bold=${bold}`;
 }
+// https://ui-avatars.com/api/?name=%E2%9D%A4%EF%B8%8F

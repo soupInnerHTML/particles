@@ -20,6 +20,7 @@ const RootNavigationContainer: React.FC = () => {
         screenOptions={{
           header: () => <></>,
           contentStyle: {backgroundColor: theme['background-basic-color-1']},
+          animation: 'slide_from_right',
         }}
         initialRouteName={AuthModel.isAuthenticated ? 'Main' : 'Login'}>
         <Stack.Screen name={'Login'} component={withAuthObserver(LoginStack)} />

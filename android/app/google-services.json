@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:467302315890:android:c682cec8b6359599044feb",
+        "mobilesdk_app_id": "1:467302315890:android:2300f1405d697424044feb",
         "android_client_info": {
-          "package_name": "com.ripple"
+          "package_name": "com.particles"
         }
       },
       "oauth_client": [

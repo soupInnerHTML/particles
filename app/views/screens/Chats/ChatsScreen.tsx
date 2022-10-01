@@ -1,5 +1,5 @@
-import React, {useMemo} from 'react';
-import {FlatList, ListRenderItem} from 'react-native';
+import React from 'react';
+import {FlatList, ListRenderItem, RefreshControl} from 'react-native';
 import ChatsModel, {IChat} from '../../../models/mobx/ChatsModel';
 import {observer} from 'mobx-react-lite';
 import Chat from '../../molecules/Chat';
@@ -19,6 +19,13 @@ const ChatsScreen: React.FC = () => {
         data={data.length ? data : placeholder}
         renderItem={renderChats}
         keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl
+            tintColor={'#fff'}
+            refreshing={ChatsModel.isPending}
+            onRefresh={ChatsModel.getData}
+          />
+        }
       />
     </Layout>
   );

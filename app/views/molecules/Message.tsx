@@ -14,7 +14,7 @@ const Message: React.FC<IMessage> = ({text, author, time, status, photos}) => {
   const theme = useTheme();
   const isOwn = author?.id === AccountModel.id;
   const messageTime = useMemo(
-    () => dayjs.unix(time?.seconds).format('hh:mm'),
+    () => dayjs.unix(time?.seconds).format('HH:mm'),
     [time?.seconds],
   );
 

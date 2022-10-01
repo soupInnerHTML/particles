@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  KeyboardAvoidingView,
   KeyboardTypeOptions,
   TextInputAndroidProps,
   TextInputIOSProps,
@@ -62,91 +61,85 @@ const AuthForm: React.FC<IAuthFormProps> = ({
   const headerHeight = useHeaderHeight();
 
   return (
-    <KeyboardAvoidingView
-      style={{flex: 1}}
-      behavior={'padding'}
-      keyboardVerticalOffset={headerHeight}>
-      <Layout style={{flex: 1}}>
-        <FormProvider {...methods}>
-          {fields.map(field => (
-            <ControlledInput
-              autoComplete={field.autoComplete}
-              textContentType={field.textContentType}
-              name={field.name}
-              control={methods.control}
-              secureTextEntry={field.secure}
-              size={'large'}
-              key={field.name}
-              placeholder={field.placeholder}
-              keyboardType={field.type}
-              style={styles.input}
-            />
-          ))}
-          <View style={styles.submit}>
-            {renderIf(link, () => (
-              <Row>
-                <Text category={'h6'}>{link!.labelText}</Text>
-                <TouchableOpacity
-                  style={!resetPassword && styles.mb8}
-                  onPress={() =>
-                    navigation.navigate('Login', {screen: link!.linkTo})
-                  }>
-                  <Text category={'h6'} status={'primary'}>
-                    &nbsp;{link!.text}
-                  </Text>
-                </TouchableOpacity>
-              </Row>
-            ))}
-            {renderIf(resetPassword, () => (
+    <Layout style={{flex: 1}}>
+      <FormProvider {...methods}>
+        {fields.map(field => (
+          <ControlledInput
+            disabled={AuthModel.isPending}
+            autoComplete={field.autoComplete}
+            textContentType={field.textContentType}
+            name={field.name}
+            control={methods.control}
+            secureTextEntry={field.secure}
+            size={'large'}
+            key={field.name}
+            placeholder={field.placeholder}
+            keyboardType={field.type}
+            style={styles.input}
+          />
+        ))}
+        <View style={styles.submit}>
+          {renderIf(link, () => (
+            <Row>
+              <Text category={'h6'}>{link!.labelText}</Text>
               <TouchableOpacity
-                style={styles.mb8}
-                onPress={() => navigation.navigate('ResetPassword')}>
-                <Text category={'h6'} appearance={'hint'}>
-                  Forgot password?
+                style={!resetPassword && styles.mb8}
+                onPress={() =>
+                  navigation.navigate('Login', {screen: link!.linkTo})
+                }>
+                <Text category={'h6'} status={'primary'}>
+                  &nbsp;{link!.text}
                 </Text>
               </TouchableOpacity>
-            ))}
-
-            <Button
-              disabled={AuthModel.isPending}
-              accessoryRight={renderIf(AuthModel.isGoogleSignIn, () => (
-                <LoadingIndicator />
-              ))}
-              onPress={AuthModel.googleSignIn}
-              status={'basic'}
+            </Row>
+          ))}
+          {renderIf(resetPassword, () => (
+            <TouchableOpacity
               style={styles.mb8}
-              accessoryLeft={() => <GoogleIcon width={23} height={23} />}>
-              Google sign in
-            </Button>
+              onPress={() => navigation.navigate('ResetPassword')}>
+              <Text category={'h6'} appearance={'hint'}>
+                Forgot password?
+              </Text>
+            </TouchableOpacity>
+          ))}
 
-            {/*<Button*/}
-            {/*  disabled={AccountModel.isPending}*/}
-            {/*  accessoryRight={renderIf(AccountModel.isGoogleSignIn, () => (*/}
-            {/*    <LoadingIndicator />*/}
-            {/*  ))}*/}
-            {/*  onPress={AccountModel.githubSignIn}*/}
-            {/*  status={'basic'}*/}
-            {/*  style={styles.mb8}*/}
-            {/*  // accessoryLeft={() => <GoogleIcon width={23} height={23} />}*/}
-            {/*>*/}
-            {/*  Github sign in*/}
-            {/*</Button>*/}
+          <Button
+            disabled={AuthModel.isPending}
+            accessoryRight={renderIf(AuthModel.isGoogleSignIn, () => (
+              <LoadingIndicator />
+            ))}
+            onPress={AuthModel.googleSignIn}
+            status={'basic'}
+            style={styles.mb8}
+            accessoryLeft={() => <GoogleIcon width={23} height={23} />}>
+            Google sign in
+          </Button>
 
-            <Button
-              status={button.type}
-              accessoryRight={renderIf(AuthModel.isSimpleSignIn, () => (
-                <LoadingIndicator />
-              ))}
-              disabled={AuthModel.isPending}
-              onPress={methods.handleSubmit(() =>
-                onSubmit(methods.getValues()),
-              )}>
-              {button.title}
-            </Button>
-          </View>
-        </FormProvider>
-      </Layout>
-    </KeyboardAvoidingView>
+          {/*<Button*/}
+          {/*  disabled={AccountModel.isPending}*/}
+          {/*  accessoryRight={renderIf(AccountModel.isGoogleSignIn, () => (*/}
+          {/*    <LoadingIndicator />*/}
+          {/*  ))}*/}
+          {/*  onPress={AccountModel.githubSignIn}*/}
+          {/*  status={'basic'}*/}
+          {/*  style={styles.mb8}*/}
+          {/*  // accessoryLeft={() => <GoogleIcon width={23} height={23} />}*/}
+          {/*>*/}
+          {/*  Github sign in*/}
+          {/*</Button>*/}
+
+          <Button
+            status={button.type}
+            accessoryRight={renderIf(AuthModel.isSimpleSignIn, () => (
+              <LoadingIndicator />
+            ))}
+            disabled={AuthModel.isPending}
+            onPress={methods.handleSubmit(() => onSubmit(methods.getValues()))}>
+            {button.title}
+          </Button>
+        </View>
+      </FormProvider>
+    </Layout>
   );
 };
 

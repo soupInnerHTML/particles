@@ -20,6 +20,7 @@ const Main: React.FC = () => {
       initialRouteName="Chats"
       screenOptions={{
         contentStyle: chatsStyles,
+        animation: 'slide_from_right',
       }}>
       <Stack.Screen
         name={'Chats'}
