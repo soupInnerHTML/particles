@@ -70,6 +70,39 @@ class ChatsModel extends FirestoreModel<IChat> {
   findChat(chatId: string) {
     return this.data.find(chat => chat.id === chatId)!;
   }
+  sendPushNotification(fcmToken: string, message: IMessagePayload) {
+    const myHeaders = new Headers();
+    myHeaders.append(
+      'Authorization',
+      'key=AAAAbM1jd3I:APA91bHh2SghisAEe9dRiVjHHn9lHbV7TX0Gd0XxokedKFXSzyFcNb7Aw_V1OlYirYPnO5mGXPvwjqRubjG3vieSqeVqlZKpDN9Ol5QKIsGIDuYSfkyLE6NJB6Xn7-RdmhDawTU6HBWb',
+    );
+    myHeaders.append('Content-Type', 'application/json');
+
+    console.log(AccountModel);
+
+    const raw = JSON.stringify({
+      data: {
+        avatar: AccountModel.avatar || AccountModel.avatarPlaceholder,
+      },
+      notification: {
+        title: AccountModel.name,
+        body: message.text,
+      },
+      to: fcmToken,
+    });
+
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow',
+    };
+
+    fetch('https://fcm.googleapis.com/fcm/send', requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+  }
   async sendMessage(to: string, message: IMessagePayload) {
     const target = this.findChat(to);
     const now = firestore.Timestamp.now();
@@ -77,7 +110,7 @@ class ChatsModel extends FirestoreModel<IChat> {
     //   .collection('users')
     //   .doc(AccountModel.id)
     //   .update({lastSeen: now});
-    return await firestore()
+    await firestore()
       .collection('chats')
       .doc(to)
       .update({
@@ -93,6 +126,11 @@ class ChatsModel extends FirestoreModel<IChat> {
           ...target.messageHistory,
         ],
       });
+
+    this.sendPushNotification(
+      'cbtsw62uS1K3MIdZkAQgkl:APA91bFo7McbrUmOKDN17qKVqLbf8AXP3SX_wgVKwcTQZsKV6NzgRLgA_S-fOZN8iSc-gTEPfPmHufO-fgSV5jh0q_B6_hjJLdqwVfDJTRMSqR-kOslPXjJIC8E1tvBJjlq6UwZbLhci',
+      message,
+    );
   }
   readMessages(chatId: string) {
     this._instance.doc(chatId).update({

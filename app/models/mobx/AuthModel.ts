@@ -3,7 +3,7 @@ import {action, computed, makeObservable, observable} from 'mobx';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import ModelWithStatus from '../abstract/ModelWithStatus';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {showFirebaseError, showSuccess} from '../../utils/messages';
+import {showFirebaseError, showSuccess} from '@utils/messages';
 import AccountModel, {IUserModel} from './AccountModel';
 import firestore from '@react-native-firebase/firestore';
 
@@ -70,8 +70,11 @@ class AuthModel extends ModelWithStatus {
   }
 
   public googleSignIn = async () => {
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
     // Get the users ID token
     const {idToken} = await GoogleSignin.signIn();
+
+    console.log(idToken);
 
     // Create a Google credential with the token
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);

@@ -1,7 +1,9 @@
-import {computed, makeObservable, observable} from 'mobx';
+import {action, computed, makeObservable, observable} from 'mobx';
 import ModelWithStatus from '../abstract/ModelWithStatus';
 import generateAvatarPlaceholder from '../../utils/generateAvatarPlaceholder';
-import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 
 interface IUserModelWithoutId {
   name: string;
@@ -11,6 +13,7 @@ interface IUserModelWithoutId {
   color?: string;
   lastSeen: FirebaseFirestoreTypes.Timestamp;
   theme: Theme;
+  fcmToken: string;
 }
 
 enum Theme {
@@ -28,9 +31,17 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
   @observable public postsOwner?: string[];
   @observable public theme = Theme.dark;
   @observable public lastSeen?: FirebaseFirestoreTypes.Timestamp;
+  @observable public color?: string;
+  @observable public fcmToken?: string;
 
   @computed public get avatarPlaceholder() {
-    return generateAvatarPlaceholder(this.name);
+    return generateAvatarPlaceholder(this.name, this.color);
+  }
+
+  @action.bound updateFcmToken(fcmToken: string) {
+    firestore().collection('users').doc(this.id).update({
+      fcmToken,
+    });
   }
 
   constructor() {
