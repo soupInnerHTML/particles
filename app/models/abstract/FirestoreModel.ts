@@ -72,6 +72,7 @@ abstract class FirestoreModel<LocalModel extends {}> extends ModelWithStatus {
           this.setStatus('PENDING');
         }
       },
+      {name: 'data'},
     );
   }
 }

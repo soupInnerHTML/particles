@@ -3,8 +3,8 @@
  */
 
 import {configure} from 'mobx';
-import {AppRegistry} from 'react-native';
-import {name as appName} from './app.json';
+import {AppRegistry, Platform} from 'react-native';
+// import {name as appName} from './app.json';
 import {enableScreens} from 'react-native-screens';
 import App from './app/views/App';
 
@@ -14,4 +14,7 @@ configure({
   enforceActions: 'never',
 });
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(
+  Platform.select({ios: 'particles', android: 'Particles'}),
+  () => App,
+);

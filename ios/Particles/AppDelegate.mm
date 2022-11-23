@@ -66,7 +66,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
   Dynamic *t = [Dynamic new];
   UIView *animationUIView = (UIView *)[t createAnimationViewWithRootView:rootView lottieName:@"particles"]; // change lottieName to your lottie files name
-  animationUIView.backgroundColor = [UIColor whiteColor]; // change backgroundColor
+//  animationUIView.backgroundColor = [UIColor whiteColor]; // change backgroundColor
 
   // register LottieSplashScreen to RNSplashScreen
   [RNSplashScreen showLottieSplash:animationUIView inRootView:rootView];

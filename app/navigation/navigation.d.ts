@@ -20,7 +20,7 @@ type MainStackParamList = {
 };
 
 type AccountStackParamList = {
-  Profile: {id?: number};
+  Profile: {id: string};
   AccountSettings: undefined;
 };
 

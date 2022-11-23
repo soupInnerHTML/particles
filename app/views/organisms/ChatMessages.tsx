@@ -11,6 +11,7 @@ import {useRoute} from '@react-navigation/native';
 import {IRoute} from '../../navigation/navigation';
 import calendar from 'dayjs/plugin/calendar';
 import {observer} from 'mobx-react-lite';
+import useFirestoreMessageHistory from '@hooks/useFirestoreMessageHistory';
 
 dayjs.extend(calendar);
 
@@ -24,13 +25,13 @@ const renderItem: ListRenderItem<IMessage | string> = ({item}) =>
   );
 
 const keyExtractor = (item: string | IMessage) =>
-  typeof item === 'string' ? item : item.time.seconds.toString();
+  typeof item === 'string' ? item : item.id;
 
 const ChatMessages: React.FC = () => {
   const {
     params: {id},
   } = useRoute<IRoute<'Chat'>>();
-  const {messageHistory} = ChatsModel.data.find(chat => chat.id === id) || {};
+  const messageHistory = useFirestoreMessageHistory(id);
 
   useEffect(() => {
     ChatsModel.readMessages(id);

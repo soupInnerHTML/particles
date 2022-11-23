@@ -32,6 +32,7 @@ const ChatHeader: React.FC<{userId: string}> = ({userId}) => {
       right={
         user ? (
           <PressableAccountAvatar
+            id={userId}
             image={
               user?.avatar || generateAvatarPlaceholder(user?.name, user?.color)
             }

@@ -1,16 +1,15 @@
 import React from 'react';
-import {View} from 'react-native';
-import {Button} from '@ui-kitten/components';
+import {Button, Layout} from '@ui-kitten/components';
 import {observer} from 'mobx-react-lite';
 import AuthModel from '../../../models/mobx/AuthModel';
 
 const AccountSettingsScreen: React.FC = () => {
   return (
-    <View>
+    <Layout style={{flex: 1}}>
       <Button status={'danger'} onPress={AuthModel.signOut}>
         Sign out
       </Button>
-    </View>
+    </Layout>
   );
 };
 

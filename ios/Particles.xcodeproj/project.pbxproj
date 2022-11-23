@@ -15,7 +15,7 @@
 		5483E588A306CEE3CECBE1A2 /* libPods-Particles.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2D15A70F8FBAC91A9B9490 /* libPods-Particles.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		F40B519B28E6C124001579A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F40B519A28E6C124001579A1 /* GoogleService-Info.plist */; };
-		F43F1039286A1CDB00DD1BEC /* particles.json in Resources */ = {isa = PBXBuildFile; fileRef = F43F1038286A1CDB00DD1BEC /* particles.json */; };
+		F49BB642292CB4DC00A9050C /* particles.json in Resources */ = {isa = PBXBuildFile; fileRef = F49BB641292CB4DC00A9050C /* particles.json */; };
 		F4F903AD2869D6F70052D8B4 /* Dynamic.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F903AC2869D6F70052D8B4 /* Dynamic.swift */; };
 /* End PBXBuildFile section */
 
@@ -47,7 +47,7 @@
 		C4D2F64BF6352A8E572CB680 /* libPods-Particles-ParticlesTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Particles-ParticlesTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F40B519A28E6C124001579A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		F43F1038286A1CDB00DD1BEC /* particles.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = particles.json; path = Particles/particles.json; sourceTree = "<group>"; };
+		F49BB641292CB4DC00A9050C /* particles.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = particles.json; sourceTree = "<group>"; };
 		F4F903AC2869D6F70052D8B4 /* Dynamic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Dynamic.swift; path = Particles/Dynamic.swift; sourceTree = "<group>"; };
 		F4F903AF2869D7760052D8B4 /* Particles-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Particles-Bridging-Header.h"; sourceTree = "<group>"; };
 		F9F363403CA5AC7B6DEE9D7F /* Pods-Particles.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Particles.release.xcconfig"; path = "Target Support Files/Pods-Particles/Pods-Particles.release.xcconfig"; sourceTree = "<group>"; };
@@ -93,7 +93,7 @@
 		13B07FAE1A68108700A75B9A /* Particles */ = {
 			isa = PBXGroup;
 			children = (
-				F43F1038286A1CDB00DD1BEC /* particles.json */,
+				F49BB641292CB4DC00A9050C /* particles.json */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -255,8 +255,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				F49BB642292CB4DC00A9050C /* particles.json in Resources */,
 				F40B519B28E6C124001579A1 /* GoogleService-Info.plist in Resources */,
-				F43F1039286A1CDB00DD1BEC /* particles.json in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

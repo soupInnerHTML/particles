@@ -12,7 +12,6 @@ import {
 import {EvaIconsPack} from '@ui-kitten/eva-icons';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import FlashMessageRegistry from 'react-native-flash-message';
-import 'react-native-get-random-values';
 import {observer} from 'mobx-react-lite';
 import AccountModel from '@models/mobx/AccountModel';
 

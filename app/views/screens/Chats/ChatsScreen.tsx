@@ -1,67 +1,23 @@
 import React, {useEffect} from 'react';
-import {FlatList, ListRenderItem, RefreshControl} from 'react-native';
+import {AppState, FlatList, ListRenderItem, RefreshControl} from 'react-native';
 import ChatsModel, {IChat} from '../../../models/mobx/ChatsModel';
 import {observer} from 'mobx-react-lite';
 import Chat from '../../molecules/Chat';
 import useOnlineDaemon from '../../../hooks/useOnlineDaemon';
 import AccountModel from '../../../models/mobx/AccountModel';
 import {Layout} from '@ui-kitten/components';
-import messaging, {
-  FirebaseMessagingTypes,
-} from '@react-native-firebase/messaging';
-import notifee, {
-  AndroidCategory,
-  AndroidColor,
-  AndroidImportance,
-} from '@notifee/react-native';
-import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
+import {onMessagePress, onMessageReceived} from '../../../messages';
+import useAppNavigation from '@hooks/useAppNavigation';
 
-async function onMessageReceived(
-  message: FirebaseMessagingTypes.RemoteMessage,
-) {
-  // Request permissions (required for iOS)
-  await notifee.requestPermission();
-
-  // Create a channel (required for Android)
-  const channelId = await notifee.createChannel({
-    id: 'default',
-    name: 'Default Channel',
-    importance: AndroidImportance.HIGH,
-    sound: 'bruh',
-  });
-
-  // Display a notification
-  await notifee.displayNotification({
-    title: message.notification?.title,
-    body: message.notification?.body,
-    android: {
-      channelId,
-      smallIcon: 'ic_notification', // optional, defaults to 'ic_launcher'.
-      // pressAction is needed if you want the notification to open the app when pressed
-      pressAction: {
-        id: 'default',
-      },
-      sound: 'bruh',
-      largeIcon: message.data?.avatar,
-      color: AndroidColor.YELLOW,
-      importance: AndroidImportance.HIGH,
-      circularLargeIcon: true,
-      category: AndroidCategory.SOCIAL,
-    },
-    ios: {
-      sound: '',
-      badgeCount: 100,
-    },
-  });
-}
-
-messaging().setBackgroundMessageHandler(onMessageReceived);
+// messaging().setBackgroundMessageHandler(onMessageReceived);
 
 const renderChats: ListRenderItem<IChat> = ({item}) => <Chat {...item} />;
 
 const ChatsScreen: React.FC = () => {
   useOnlineDaemon(AccountModel.id);
   const {placeholder, data} = ChatsModel;
+  const navigation = useAppNavigation();
 
   useEffect(() => {
     messaging()
@@ -71,13 +27,27 @@ const ChatsScreen: React.FC = () => {
       AccountModel.updateFcmToken(t),
     );
 
-    const unsub = messaging().onMessage(onMessageReceived);
+    let unsubOnMessage = messaging().onMessage(onMessageReceived);
+
+    AppState.addEventListener('change', nextAppState => {
+      switch (nextAppState) {
+        case 'background':
+        case 'inactive':
+          return unsubOnMessage();
+        case 'active':
+          unsubOnMessage = messaging().onMessage(onMessageReceived);
+      }
+    });
+
+    const unsubMessagePress = onMessagePress(id =>
+      navigation.navigate('Chat', {id, userId: AccountModel.id || ''}),
+    );
 
     return () => {
-      unsub();
       unsubToken();
+      unsubMessagePress();
     };
-  });
+  }, []);
 
   return (
     <Layout style={{flex: 1}}>
@@ -95,13 +65,6 @@ const ChatsScreen: React.FC = () => {
       />
     </Layout>
   );
-  // return (
-  //   <Layout style={{flex: 1}}>
-  //     {ChatsModel.data.map((chat, index) => (
-  //       <Chat {...chat} key={index} />
-  //     ))}
-  //   </Layout>
-  // );
 };
 
 export default observer(ChatsScreen);

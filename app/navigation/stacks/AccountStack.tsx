@@ -25,13 +25,14 @@ const AccountStack: React.FC = () => {
       initialRouteName="Profile"
       screenOptions={{
         contentStyle: commonStackStyles,
+        animation: 'slide_from_right',
         header: ({back, navigation, options, route}) => {
           return (
             <TopNavigationHeader
               right={options.headerRight}
               canGoBack={back?.title || navigation.canGoBack()}
-              title={route.name}
-              subtitle={'@rubysoho'}
+              title={''}
+              subtitle={''}
             />
           );
         },
