@@ -16,7 +16,7 @@ const renderChats: ListRenderItem<IChat> = ({item}) => <Chat {...item} />;
 
 const ChatsScreen: React.FC = () => {
   useOnlineDaemon(AccountModel.id);
-  const {placeholder, data} = ChatsModel;
+  const {placeholder, data, searchData, searchPath} = ChatsModel;
   const navigation = useAppNavigation();
 
   useEffect(() => {
@@ -49,10 +49,20 @@ const ChatsScreen: React.FC = () => {
     };
   }, []);
 
+  const chats = (() => {
+    if (searchPath) {
+      return searchData;
+    } else if (data.length) {
+      return data;
+    } else {
+      return placeholder;
+    }
+  })();
+
   return (
     <Layout style={{flex: 1}}>
       <FlatList
-        data={data.length ? data : placeholder}
+        data={chats}
         renderItem={renderChats}
         keyExtractor={item => item.id}
         refreshControl={

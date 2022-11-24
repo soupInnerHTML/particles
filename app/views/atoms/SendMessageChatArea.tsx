@@ -13,7 +13,7 @@ interface ISendMessageChatAreaProps {
   setTextMessage: (a?: string) => void;
   attachPhotos: () => void;
   attachedPhotos?: Asset[];
-  setAttachedPhotos: (a?: Asset[]) => void;
+  setAttachedPhotos: (a: Asset[] | null) => void;
 }
 
 const SendMessageChatArea: React.FC<ISendMessageChatAreaProps> = ({
@@ -24,7 +24,7 @@ const SendMessageChatArea: React.FC<ISendMessageChatAreaProps> = ({
   setAttachedPhotos,
 }) => {
   const {
-    params: {id},
+    params: {id: chatId, userId},
   } = useRoute<IRoute<'Chat'>>();
   return (
     <View style={styles.messageSend}>
@@ -43,8 +43,8 @@ const SendMessageChatArea: React.FC<ISendMessageChatAreaProps> = ({
         style={styles.sendButton}
         onPress={() => {
           setTextMessage('');
-          setAttachedPhotos(undefined);
-          ChatsModel.sendMessage(id, {
+          setAttachedPhotos(null);
+          ChatsModel.sendMessage(chatId, userId, {
             text: textMessage,
             photos: attachedPhotos,
           });

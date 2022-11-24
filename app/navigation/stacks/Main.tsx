@@ -6,6 +6,8 @@ import Chat from '../../views/screens/Chat/ChatScreen';
 import ChatHeader from '../header/ChatHeader';
 import {MainStackParamList} from '../navigation';
 import {StyleProp, ViewStyle} from 'react-native';
+import {Input} from '@ui-kitten/components';
+import ChatsSearchInput from '@atoms/ChatsSearchInput';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -27,7 +29,9 @@ const Main: React.FC = () => {
         component={ChatsScreen}
         options={{
           header: ({options}) => (
-            <TopNavigationHeader title={'Chats'} right={options.headerRight} />
+            <TopNavigationHeader title={'Chats'} right={options.headerRight}>
+              <ChatsSearchInput />
+            </TopNavigationHeader>
           ),
         }}
       />

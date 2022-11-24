@@ -2,7 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 import {IUserModel} from './AccountModel';
 import {hydrate} from '../persist/hydrate';
 import {persist} from 'mobx-persist';
-import {makeAutoObservable, makeObservable, when} from 'mobx';
+import {makeAutoObservable, when} from 'mobx';
 
 @hydrate
 class UsersModel {

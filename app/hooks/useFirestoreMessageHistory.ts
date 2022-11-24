@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {IMessage} from '@models/mobx/ChatsModel';
 
-export default function (chatId: string) {
+export default function (chatId: string): Maybe<IMessage[]> {
   const [messageHistory, setMessageHistory] = useState<IMessage[]>([]);
   useEffect(() => {
     if (!+chatId) {

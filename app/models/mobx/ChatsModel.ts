@@ -1,5 +1,13 @@
 import FirestoreModel from '../abstract/FirestoreModel';
-import {computed, makeObservable, override, when} from 'mobx';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  override,
+  reaction,
+  when,
+} from 'mobx';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
@@ -11,8 +19,7 @@ import {hydrate} from '@models/persist/hydrate';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {showSuccess} from '@utils/messages';
 import {Alert} from 'react-native';
-
-// import DocumentReference = FirebaseFirestoreTypes.DocumentReference;
+import getIdAlphabetically from '@utils/getIdAlphabetically';
 
 export interface IChat {
   members: FirebaseFirestoreTypes.DocumentReference<IUserModel>[];
@@ -42,6 +49,9 @@ export enum MessageStatus {
 
 @hydrate
 class ChatsModel extends FirestoreModel<IChat> {
+  @observable searchData: IChat[] = [];
+  @observable searchPath: string = '';
+
   @persist @computed get lastChatsCount() {
     return this.data.length || 3;
   }
@@ -62,16 +72,12 @@ class ChatsModel extends FirestoreModel<IChat> {
   }
   @override
   protected get _filteredInstance() {
-    const {id} = AccountModel;
-    const ref = firestore().collection('users').doc(id);
-
-    console.log(ref.id);
     return this._instance
-      .where('members', 'array-contains', ref)
+      .where('members', 'array-contains', AccountModel.ref)
       .orderBy('changed', 'desc');
   }
   findChat(chatId: string) {
-    return this.data.find(chat => chat.id === chatId)!;
+    return this.data.find(chat => chat.id === chatId);
   }
   sendPushNotification(
     fcmToken: string,
@@ -116,33 +122,41 @@ class ChatsModel extends FirestoreModel<IChat> {
         console.log('https://fcm.googleapis.com/fcm/send error', error),
       );
   }
-  async sendMessage(to: string, message: IMessagePayload) {
-    const target = this.findChat(to);
+  async sendMessage(
+    chatId: string,
+    companionId: string,
+    message: IMessagePayload,
+  ) {
+    const target = this.findChat(chatId);
     const now = firestore.Timestamp.now();
-    // firestore()
-    //   .collection('users')
-    //   .doc(AccountModel.id)
-    //   .update({lastSeen: now});
-    await firestore()
-      .collection('chats')
-      .doc(to)
-      .collection('messageHistory')
-      .add({
-        author: firestore().collection('users').doc(AccountModel.id!),
-        status: 'UNREAD',
-        text: message.text?.trim() ?? null,
-        photos: message.photos?.map(asset => asset.base64) ?? null,
-        time: now,
-      });
 
-    const companionRef = target.members.find(
-      user => user.id != AccountModel.id,
-    );
+    const chatRef = firestore().collection<IChat>('chats').doc(chatId);
+
+    console.log(companionId);
+
+    const companionRef =
+      target?.members.find(user => user.id === companionId) ??
+      firestore().collection<IUserModel>('users').doc(companionId);
+
     const companion = await companionRef?.get();
+
+    // @ts-ignore
+    chatRef.set({
+      members: [AccountModel.ref!, companionRef!],
+      changed: now,
+    });
+
+    await chatRef.collection('messageHistory').add({
+      author: AccountModel.ref,
+      status: 'UNREAD',
+      text: message.text?.trim() ?? null,
+      photos: message.photos?.map(asset => asset.base64) ?? null,
+      time: now,
+    });
 
     this.sendPushNotification(
       companion?.data()?.fcmToken || '',
-      target.id,
+      chatId,
       message,
     );
   }
@@ -183,13 +197,60 @@ class ChatsModel extends FirestoreModel<IChat> {
     content && Clipboard.setString(content);
     showSuccess({message: 'Media data copied'});
   }
+  @action.bound setSearchPath(path: string) {
+    this.searchPath = path;
+  }
+  @action.bound async searchChats(path: string) {
+    this.setStatus('PENDING');
+    const prepare: IChat[] = [];
+    const promises: Promise<IChat | void>[] = [];
+    const snapshot = await firestore()
+      .collection<IUserModel>('users')
+      .where('name', '==', path)
+      .get();
+
+    snapshot.forEach(item => {
+      if (item.exists) {
+        promises.push(
+          this.imitateChatByUserRef(item.ref)
+            .then(chat => {
+              prepare.push(chat);
+            })
+            .catch(() => this.setStatus('ERROR')),
+        );
+      }
+    });
+
+    Promise.all(promises)
+      .then(() => {
+        this.searchData = prepare;
+        this.setStatus('DONE');
+      })
+      .catch(() => this.setStatus('ERROR'));
+  }
+  async imitateChatByUserRef(
+    userRef: FirebaseFirestoreTypes.DocumentReference<IUserModel>,
+  ): Promise<IChat> {
+    const me = await AccountModel.ref!.get();
+    return {
+      changed: firestore.Timestamp.now().seconds,
+      members: [me.ref, userRef],
+      id: getIdAlphabetically(me.ref.id, userRef.id),
+    };
+  }
   constructor() {
     super();
     makeObservable(this);
+
     when(
       () => AuthModel.isAuthenticated,
       () => this._filteredInstance.onSnapshot(this._onSnapshot, this._onError),
       {name: 'when'},
+    );
+
+    reaction(
+      () => this.searchPath,
+      path => this.searchChats(path),
     );
   }
 }

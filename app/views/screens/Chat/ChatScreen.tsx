@@ -8,8 +8,8 @@ import SendMessageChatArea from '@atoms/SendMessageChatArea';
 import ChatMessages from '@organisms/ChatMessages';
 
 const ChatScreen: React.FC<StackItem<'Chat'>> = () => {
-  const [textMessage, setTextMessage] = useState<string>();
-  const [attachedPhotos, setAttachedPhotos] = useState<Asset[]>();
+  const [textMessage, setTextMessage] = useState<string>('');
+  const [attachedPhotos, setAttachedPhotos] = useState<Asset[] | null>(null);
 
   async function attachPhotos() {
     const result = await launchImageLibrary({

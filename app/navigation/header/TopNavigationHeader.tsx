@@ -32,6 +32,7 @@ const Header: React.FC<IHeaderProps> = ({
   subtitle = '',
   canGoBack,
   right,
+  children,
 }) => {
   return (
     <React.Fragment>
@@ -45,6 +46,7 @@ const Header: React.FC<IHeaderProps> = ({
         subtitle={subtitle}
         alignment={'center'}
       />
+      {children}
       <Divider />
     </React.Fragment>
   );

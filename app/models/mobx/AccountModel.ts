@@ -7,9 +7,11 @@ import firestore, {
 
 interface IUserModelWithoutId {
   name: string;
+  shortName: string;
   email: string;
   postsOwner?: string[];
   avatar?: string;
+  avatarPlaceholder: string;
   color?: string;
   lastSeen: FirebaseFirestoreTypes.Timestamp;
   theme: Theme;
@@ -36,6 +38,13 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
 
   @computed public get avatarPlaceholder() {
     return generateAvatarPlaceholder(this.name, this.color);
+  }
+  @computed public get ref() {
+    if (this.id) {
+      return firestore().collection<IUserModel>('users').doc(this.id);
+    } else {
+      return null;
+    }
   }
 
   @action.bound updateFcmToken(fcmToken: string) {

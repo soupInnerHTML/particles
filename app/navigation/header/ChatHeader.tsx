@@ -1,41 +1,35 @@
-import React, {useEffect, useState} from 'react';
-import {IUserModel} from '../../models/mobx/AccountModel';
+import React from 'react';
 import TopNavigationHeader from './TopNavigationHeader';
 import dayjs from 'dayjs';
 import PressableAccountAvatar from '../../views/atoms/PressableAccountAvatar';
 import generateAvatarPlaceholder from '../../utils/generateAvatarPlaceholder';
 import {observer} from 'mobx-react-lite';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import firestore from '@react-native-firebase/firestore';
-import {ONLINE_TIMING} from '../../hooks/useOnlineDaemon';
 import useIsOnline from '../../hooks/useIsOnline';
 import useFirestoreUser from '../../hooks/useFirestoreUser';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {View} from 'react-native';
 import {chatPlaceholderStyles} from '@atoms/ChatPlaceholder';
 import usePlaceholderColors from '@hooks/usePlaceholderColors';
+import getLastSeen from '@utils/getLastSeen';
 
 dayjs.extend(relativeTime);
 
 const ChatHeader: React.FC<{userId: string}> = ({userId}) => {
   const user = useFirestoreUser(userId);
   const isOnline = useIsOnline(user?.lastSeen.seconds ?? 0);
-  const lastSeen = user?.lastSeen?.seconds
-    ? dayjs.unix(Number(user.lastSeen.seconds)).fromNow()
-    : 'never';
+  const lastSeen = getLastSeen(user?.lastSeen.seconds);
   const {highlightColor, backgroundColor} = usePlaceholderColors();
 
   return (
     <TopNavigationHeader
       title={user?.name ?? 'John Doe'}
-      subtitle={isOnline ? 'online' : 'Last seen ' + lastSeen}
+      subtitle={isOnline ? 'online' : lastSeen}
       right={
         user ? (
           <PressableAccountAvatar
             id={userId}
-            image={
-              user?.avatar || generateAvatarPlaceholder(user?.name, user?.color)
-            }
+            image={user.avatar || user.avatarPlaceholder}
           />
         ) : (
           <SkeletonPlaceholder {...{highlightColor, backgroundColor}}>

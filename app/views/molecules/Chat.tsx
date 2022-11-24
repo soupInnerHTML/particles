@@ -1,13 +1,12 @@
 import React, {useMemo} from 'react';
-import {IChat, MessageStatus} from '@models/mobx/ChatsModel';
+import ChatsModel, {IChat, MessageStatus} from '@models/mobx/ChatsModel';
 import {observer} from 'mobx-react-lite';
 import AccountModel from '../../models/mobx/AccountModel';
 import {useNavigation} from '@react-navigation/native';
 import {INavigation} from '../../navigation/navigation';
 import AuthModel from '../../models/mobx/AuthModel';
 import {Avatar, Icon, Layout, Text, useTheme} from '@ui-kitten/components';
-import generateAvatarPlaceholder from '../../utils/generateAvatarPlaceholder';
-import {LogBox, TouchableOpacity, View, Animated} from 'react-native';
+import {Animated, LogBox, TouchableOpacity, View} from 'react-native';
 import dayjs from 'dayjs';
 import {ScaledSheet} from 'react-native-size-matters';
 import ChipsCounter from '../atoms/ChipsCounter';
@@ -23,6 +22,7 @@ import {getDateRelativeToYear} from '../../utils';
 import useFirestoreMessageHistory from '@hooks/useFirestoreMessageHistory';
 import {RectButton, Swipeable} from 'react-native-gesture-handler';
 import {noop} from 'lodash';
+import getLastSeen from '@utils/getLastSeen';
 
 LogBox.ignoreAllLogs();
 
@@ -102,7 +102,7 @@ const renderLeftActions = (
       style={{
         flex: 1,
         // width: trans,
-        backgroundColor: 'red',
+        backgroundColor: '#DB3912',
         // transform: [{translateX: trans}],
       }}>
       <RectButton style={[styles.action, styles.deleteAction]} onPress={noop}>
@@ -118,8 +118,8 @@ const Chat: React.FC<IChat> = ({members, id}) => {
   const companion = useFirestoreUser(companionRef?.id ?? members[0].id);
 
   const messageHistory = useFirestoreMessageHistory(id);
-  const lastMessage = messageHistory[0];
-  const unreadCount = messageHistory.filter(
+  const lastMessage = messageHistory?.[0];
+  const unreadCount = messageHistory?.filter(
     message =>
       message.status === MessageStatus.UNREAD &&
       message.author?.id !== AccountModel.id,
@@ -129,17 +129,21 @@ const Chat: React.FC<IChat> = ({members, id}) => {
   const isOnline = useIsOnline(companion?.lastSeen?.seconds ?? 0);
 
   const relativeTime = useMemo(() => {
-    const unix = dayjs.unix(lastMessage?.time?.seconds);
-    return unix.calendar(null, {
-      sameDay: 'HH:mm',
-      lastDay: 'ddd', // The day before ( Wed )
-      lastWeek: 'ddd', // Last week ( Wed )
-      sameElse: getDateRelativeToYear.bind(unix, 'DD.MM', 'DD.MM.YY'),
-    });
+    if (lastMessage?.time?.seconds) {
+      const unix = dayjs.unix(lastMessage.time.seconds);
+      return unix.calendar(null, {
+        sameDay: 'HH:mm',
+        lastDay: 'ddd', // The day before ( Wed )
+        lastWeek: 'ddd', // Last week ( Wed )
+        sameElse: getDateRelativeToYear.bind(unix, 'DD.MM', 'DD.MM.YY'),
+      });
+    } else {
+      return '';
+    }
   }, [lastMessage?.time?.seconds]);
 
   const isReady =
-    companion && AuthModel.isAuthenticated && messageHistory.length;
+    companion && AuthModel.isAuthenticated && !ChatsModel.isPending;
 
   return isReady ? (
     <Swipeable
@@ -154,7 +158,7 @@ const Chat: React.FC<IChat> = ({members, id}) => {
             onPress={() =>
               companion &&
               navigation.navigate('Chat', {
-                userId: companionRef.id,
+                userId: companionRef!.id,
                 id,
               })
             }>
@@ -162,12 +166,7 @@ const Chat: React.FC<IChat> = ({members, id}) => {
               <View>
                 <Avatar
                   source={{
-                    uri:
-                      companion?.avatar ||
-                      generateAvatarPlaceholder(
-                        companion?.name,
-                        companion?.color,
-                      ),
+                    uri: companion?.avatar || companion?.avatarPlaceholder,
                   }}
                   style={styles.avatar}
                 />
@@ -176,7 +175,7 @@ const Chat: React.FC<IChat> = ({members, id}) => {
               <View style={styles.chatBody}>
                 <Text>{companion?.name}</Text>
                 <Row alignItems={'baseline'}>
-                  {!!lastMessage.photos && (
+                  {!!lastMessage?.photos && (
                     <View style={styles.mediaChips}>
                       <ChipsText>
                         <Text style={styles.chatMessage}>
@@ -187,7 +186,7 @@ const Chat: React.FC<IChat> = ({members, id}) => {
                       </ChipsText>
                     </View>
                   )}
-                  {!!lastMessage.videos && (
+                  {!!lastMessage?.videos && (
                     <View style={styles.mediaChips}>
                       <ChipsText>
                         <Text style={styles.chatMessage}>{`📹 ${2}`}</Text>
@@ -195,13 +194,16 @@ const Chat: React.FC<IChat> = ({members, id}) => {
                     </View>
                   )}
                   <Text numberOfLines={2} style={styles.chatMessage}>
-                    {lastMessage.text}
+                    {lastMessage?.text ??
+                      (isOnline
+                        ? '@' + companion.shortName
+                        : getLastSeen(companion?.lastSeen.seconds))}
                   </Text>
                 </Row>
               </View>
               <View style={styles.meta}>
                 <Row alignItems={'flex-end'}>
-                  {!unreadCount && (
+                  {!unreadCount && !!lastMessage && (
                     <ReadStatusIcon
                       status={lastMessage.status}
                       fill={theme['color-primary-500']}
@@ -274,7 +276,7 @@ const styles = ScaledSheet.create({
     backgroundColor: '#ffab00',
   },
   readAction: {
-    backgroundColor: '#497AFC',
+    backgroundColor: '#3366FF',
   },
 });
 
