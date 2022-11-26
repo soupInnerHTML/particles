@@ -51,10 +51,7 @@ const ChatAttachment: React.FC<
                 style={styles.attachment}
                 entering={ZoomIn}
                 exiting={ZoomOut}>
-                <Image
-                  source={{uri: 'data:image/png;base64,' + photo.base64}}
-                  style={styles.image}
-                />
+                <Image source={{uri: photo.uri}} style={styles.image} />
               </Animated.View>
             </TouchableOpacity>
           );

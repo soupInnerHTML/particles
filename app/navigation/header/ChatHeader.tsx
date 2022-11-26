@@ -17,8 +17,8 @@ dayjs.extend(relativeTime);
 
 const ChatHeader: React.FC<{userId: string}> = ({userId}) => {
   const user = useFirestoreUser(userId);
-  const isOnline = useIsOnline(user?.lastSeen.seconds ?? 0);
-  const lastSeen = getLastSeen(user?.lastSeen.seconds);
+  const isOnline = useIsOnline(user?.lastSeen?.seconds ?? 0);
+  const lastSeen = getLastSeen(user?.lastSeen?.seconds);
   const {highlightColor, backgroundColor} = usePlaceholderColors();
 
   return (

@@ -14,6 +14,8 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import FlashMessageRegistry from 'react-native-flash-message';
 import {observer} from 'mobx-react-lite';
 import AccountModel from '@models/mobx/AccountModel';
+import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
+import {compose} from 'lodash/fp';
 
 GoogleSignin.configure();
 
@@ -53,4 +55,4 @@ const App: React.FC = () => {
   );
 };
 
-export default observer(App);
+export default compose(gestureHandlerRootHOC, observer)(App);

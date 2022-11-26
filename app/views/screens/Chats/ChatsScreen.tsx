@@ -1,77 +1,64 @@
 import React, {useEffect} from 'react';
-import {AppState, FlatList, ListRenderItem, RefreshControl} from 'react-native';
+import {Keyboard, ListRenderItem} from 'react-native';
 import ChatsModel, {IChat} from '../../../models/mobx/ChatsModel';
 import {observer} from 'mobx-react-lite';
-import Chat from '../../molecules/Chat';
+import Chat from '@organisms/Chat';
 import useOnlineDaemon from '../../../hooks/useOnlineDaemon';
 import AccountModel from '../../../models/mobx/AccountModel';
 import {Layout} from '@ui-kitten/components';
-import messaging from '@react-native-firebase/messaging';
-import {onMessagePress, onMessageReceived} from '../../../messages';
+import DisplayMessagesService from '../../../messaging/DisplayMessagesService';
 import useAppNavigation from '@hooks/useAppNavigation';
+import Animated, {
+  Layout as ReanimatedLayout,
+  SlideOutUp,
+} from 'react-native-reanimated';
+import EmptyChats from '@atoms/EmptyChats';
+import SearchChatsModel from '@models/mobx/SearchChatsModel';
+import BackendMessagesService from '../../../messaging/BackendMessagesService';
 
-// messaging().setBackgroundMessageHandler(onMessageReceived);
+// BackendMessagesService.setBackgroundMessageHandler(
+//   DisplayMessagesService.onMessageReceived,
+// );
 
-const renderChats: ListRenderItem<IChat> = ({item}) => <Chat {...item} />;
+const renderChats: ListRenderItem<IChat> = ({item}) => (
+  <Animated.View exiting={SlideOutUp}>
+    <Chat {...item} />
+  </Animated.View>
+);
 
 const ChatsScreen: React.FC = () => {
   useOnlineDaemon(AccountModel.id);
-  const {placeholder, data, searchData, searchPath} = ChatsModel;
   const navigation = useAppNavigation();
 
   useEffect(() => {
-    messaging()
-      .getToken()
-      .then(t => AccountModel.updateFcmToken(t));
-    const unsubToken = messaging().onTokenRefresh(t =>
-      AccountModel.updateFcmToken(t),
-    );
-
-    let unsubOnMessage = messaging().onMessage(onMessageReceived);
-
-    AppState.addEventListener('change', nextAppState => {
-      switch (nextAppState) {
-        case 'background':
-        case 'inactive':
-          return unsubOnMessage();
-        case 'active':
-          unsubOnMessage = messaging().onMessage(onMessageReceived);
-      }
-    });
-
-    const unsubMessagePress = onMessagePress(id =>
-      navigation.navigate('Chat', {id, userId: AccountModel.id || ''}),
-    );
-
-    return () => {
-      unsubToken();
-      unsubMessagePress();
-    };
+    // const unsubscribe = BackendMessagesService.setMessageHandler(
+    // DisplayMessagesService.onMessageReceived,
+    // id => navigation.navigate('Chat', {id, userId: AccountModel.id || ''}),
+    // );
+    // return unsubscribe;
   }, []);
 
-  const chats = (() => {
-    if (searchPath) {
-      return searchData;
-    } else if (data.length) {
-      return data;
-    } else {
-      return placeholder;
-    }
-  })();
+  const chats = SearchChatsModel.searchQuery
+    ? SearchChatsModel.data
+    : ChatsModel.data;
 
   return (
     <Layout style={{flex: 1}}>
-      <FlatList
+      <Animated.FlatList
+        itemLayoutAnimation={ReanimatedLayout.springify().damping(12)}
         data={chats}
         renderItem={renderChats}
         keyExtractor={item => item.id}
-        refreshControl={
-          <RefreshControl
-            tintColor={'#fff'}
-            refreshing={ChatsModel.isPending}
-            onRefresh={ChatsModel.getData}
-          />
-        }
+        onScroll={Keyboard.dismiss}
+        ListEmptyComponent={EmptyChats}
+        // contentContainerStyle={{flex: 1}}
+        // refreshControl={
+        //   <RefreshControl
+        //     tintColor={'#fff'}
+        //     refreshing={ChatsModel.isPending}
+        //     onRefresh={ChatsModel.getData}
+        //   />
+        // }
       />
     </Layout>
   );

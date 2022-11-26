@@ -7,6 +7,8 @@ type IWithId<
   id: IdType;
 };
 
+type IWithoutId<Model extends NotArray<object>> = Omit<Model, 'id'>;
+
 type Maybe<Type> = Type | undefined | null | void;
 
 type IMaybe<Type extends NotArray<object>> = {

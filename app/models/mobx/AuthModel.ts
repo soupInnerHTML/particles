@@ -14,6 +14,7 @@ export interface IAuth {
 
 export type ISignUp = IAuth & {
   name: string;
+  shortName: string;
 };
 
 enum ESignInMethods {
@@ -51,6 +52,7 @@ class AuthModel extends ModelWithStatus {
         email: AccountModel.email!,
         id: AccountModel.id!,
         lastSeen: firestore.Timestamp.now(),
+        shortName: params.shortName,
       });
     }
   };

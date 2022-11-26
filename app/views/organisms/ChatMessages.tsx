@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo} from 'react';
-import {ListRenderItem, View} from 'react-native';
+import {Keyboard, ListRenderItem, View} from 'react-native';
 import Animated, {Layout} from 'react-native-reanimated';
 import ChatsModel, {IMessage} from '@models/mobx/ChatsModel';
 import dayjs from 'dayjs';
@@ -63,6 +63,7 @@ const ChatMessages: React.FC = () => {
       inverted
       itemLayoutAnimation={Layout.springify()}
       data={sections}
+      onScroll={Keyboard.dismiss}
     />
   );
 };

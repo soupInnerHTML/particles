@@ -5,7 +5,7 @@ import ChatsModel, {
 } from '../../models/mobx/ChatsModel';
 import {Text, useTheme} from '@ui-kitten/components';
 import AccountModel from '../../models/mobx/AccountModel';
-import {ActionSheetIOS, Alert, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import dayjs from 'dayjs';
 import {ScaledSheet} from 'react-native-size-matters';
 import ReadStatusIcon from '../atoms/ReadStatusIcon';
@@ -15,8 +15,29 @@ import ImageModal from 'react-native-image-modal';
 import VisibilitySensor from '@svanboxel/visibility-sensor-react-native';
 import {useRoute} from '@react-navigation/native';
 import {IRoute} from '../../navigation/navigation';
-import {noop} from 'lodash';
-import Clipboard from '@react-native-clipboard/clipboard';
+import showContextActions from '@utils/showContextActions';
+
+function openContextActions(
+  chatId: string,
+  messageId: string,
+  text: string | undefined,
+) {
+  showContextActions([
+    {
+      title: 'Delete',
+      callback: () => ChatsModel.deleteMessage(chatId, messageId),
+      destructive: true,
+    },
+    {
+      title: 'Edit',
+      callback: () => ChatsModel.editMessage(text, chatId, messageId),
+    },
+    {
+      title: 'Copy',
+      callback: () => ChatsModel.copyMessage(text),
+    },
+  ]);
+}
 
 const Message: React.FC<IMessage> = ({
   text,
@@ -41,36 +62,12 @@ const Message: React.FC<IMessage> = ({
     <VisibilitySensor
       onChange={() => {
         if (author?.id !== AccountModel.id && status !== MessageStatus.READ) {
-          // console.log({id, text});
           ChatsModel.readMessages(chatId, id);
         }
       }}>
       <Animated.View entering={isOwn ? SlideInRight : SlideInLeft}>
         <TouchableOpacity
-          onLongPress={() => {
-            // ChatsModel.deleteMessage('sp2nEeP0pFGyaLluhMEq', id);
-
-            ActionSheetIOS.showActionSheetWithOptions(
-              {
-                options: ['Cancel', 'Delete', 'Edit', 'Copy'],
-                cancelButtonIndex: 0,
-                destructiveButtonIndex: 1,
-                userInterfaceStyle: 'dark',
-              },
-              buttonIndex => {
-                switch (buttonIndex) {
-                  case 0:
-                    return noop(); //cancel
-                  case 1:
-                    return ChatsModel.deleteMessage(chatId, id); //delete
-                  case 2:
-                    return ChatsModel.editMessage(text, chatId, id); //edit
-                  case 3:
-                    return ChatsModel.copyMessage(text); //copy
-                }
-              },
-            );
-          }}
+          onLongPress={() => openContextActions(chatId, id, text)}
           style={[
             styles.message,
             isOwn ? styles.messageRight : styles.messageLeft,
@@ -85,7 +82,7 @@ const Message: React.FC<IMessage> = ({
           {photos?.map(photo => (
             <ImageModal
               modalImageResizeMode={'contain'}
-              source={{uri: 'data:image/png;base64,' + photo}}
+              source={{uri: photo}}
               style={styles.image}
             />
           ))}

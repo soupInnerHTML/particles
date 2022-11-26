@@ -1,56 +1,103 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Icon, Input, Text} from '@ui-kitten/components';
-import {ScaledSheet} from 'react-native-size-matters';
+import {s, ScaledSheet} from 'react-native-size-matters';
 import Row from './Row';
-import {TouchableOpacity} from 'react-native';
-import ChatsModel from '@models/mobx/ChatsModel';
+import {TouchableOpacity, useWindowDimensions} from 'react-native';
 import {observer} from 'mobx-react-lite';
+import {useIsFocused} from '@react-navigation/native';
+import SearchChatsModel from '@models/mobx/SearchChatsModel';
+import Animated, {
+  measure,
+  useAnimatedReaction,
+  useAnimatedRef,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+
+const CONTAINER_HORIZONTAL_MARGIN = s(8);
+const CANCEL_MARGIN_LEFT = s(8);
 
 const ChatsSearchInput: React.FC = () => {
+  const isNavigationFocused = useIsFocused();
   const [isFocused, setIsFocused] = useState(false);
-  const {setSearchPath, searchPath} = ChatsModel;
-  const ref = useRef<Input>(null);
+  const {setSearchQuery, searchQuery} = SearchChatsModel;
+  const inputRef = useAnimatedRef<Input>();
+  const cancelRef = useAnimatedRef<TouchableOpacity>();
+
+  function cancel() {
+    inputRef.current?.blur();
+    setSearchQuery('');
+  }
+
+  useEffect(() => {
+    if (!isNavigationFocused) {
+      cancel();
+    }
+  }, [isNavigationFocused]);
+
+  const isCancelVisible = isFocused || searchQuery;
+
+  const {width} = useWindowDimensions();
+  const inputWidth = useSharedValue(width - CONTAINER_HORIZONTAL_MARGIN * 2);
+  const inputStyle = useAnimatedStyle(() => ({
+    width: inputWidth.value,
+  }));
+
+  useAnimatedReaction(
+    () => isCancelVisible,
+    (visible, prev) => {
+      if (prev !== null && visible !== prev) {
+        const cancelMeasured = measure(cancelRef);
+        const inputMeasured = measure(inputRef);
+        if (cancelMeasured && inputMeasured) {
+          const computedWidth = visible
+            ? inputMeasured.width - cancelMeasured.width - CANCEL_MARGIN_LEFT
+            : inputMeasured.width + cancelMeasured.width + CANCEL_MARGIN_LEFT;
+          inputWidth.value = withTiming(computedWidth);
+        }
+      }
+    },
+  );
 
   return (
-    <Row style={styles.container} alignItems={'center'}>
-      <Input
-        blurOnSubmit
-        value={searchPath}
-        ref={ref}
-        onChangeText={setSearchPath}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        accessoryLeft={props => <Icon {...props} name={'search'} />}
-        placeholder={'Search for chats'}
-        size={'small'}
-        style={styles.input}
-      />
-      {isFocused && (
-        <TouchableOpacity
-          style={styles.cancel}
-          onPress={() => {
-            ref.current?.blur();
-            setSearchPath('');
-          }}>
-          <Text status={'primary'}>Cancel</Text>
-        </TouchableOpacity>
-      )}
+    <Row
+      style={styles.container}
+      alignItems={'center'}
+      justifyContent={'space-between'}>
+      <Animated.View style={inputStyle}>
+        <Input
+          blurOnSubmit
+          value={searchQuery}
+          ref={inputRef}
+          onChangeText={setSearchQuery}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          accessoryLeft={props => <Icon {...props} name={'search'} />}
+          placeholder={'Search for chats'}
+          size={'small'}
+          style={styles.input}
+        />
+      </Animated.View>
+      <TouchableOpacity ref={cancelRef} style={styles.cancel} onPress={cancel}>
+        <Text status={'primary'}>Cancel</Text>
+      </TouchableOpacity>
     </Row>
   );
 };
 
 const styles = ScaledSheet.create({
   container: {
-    marginHorizontal: '8@s',
+    marginHorizontal: CONTAINER_HORIZONTAL_MARGIN,
     marginTop: '-8@vs',
+    marginBottom: '8@vs',
   },
   input: {
-    marginBottom: '8@vs',
     borderRadius: '16@s',
     flexGrow: 1,
   },
   cancel: {
-    marginLeft: '8@s',
+    marginLeft: CANCEL_MARGIN_LEFT,
   },
 });
 

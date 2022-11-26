@@ -16,6 +16,7 @@ module.exports = function (api) {
             // This needs to be mirrored in tsconfig.json
             '@models': './app/models',
             '@svg': './app/assets/svg',
+            '@anim': './app/assets/anim',
             '@utils': './app/utils',
             '@hoc': './app/hoc',
             '@hooks': './app/hooks',

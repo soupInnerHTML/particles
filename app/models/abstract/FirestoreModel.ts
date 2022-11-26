@@ -40,6 +40,8 @@ abstract class FirestoreModel<LocalModel extends {}> extends ModelWithStatus {
     });
 
     this.data = prepared;
+
+    this.setStatus('DONE');
   };
 
   @action.bound protected _onError = (error: Error) => {
@@ -63,17 +65,17 @@ abstract class FirestoreModel<LocalModel extends {}> extends ModelWithStatus {
     super();
     // this._filteredInstance.onSnapshot(this._onSnapshot, this._onError);
 
-    reaction(
-      () => this.data.length,
-      isExist => {
-        if (isExist) {
-          this.setStatus('DONE');
-        } else {
-          this.setStatus('PENDING');
-        }
-      },
-      {name: 'data'},
-    );
+    // reaction(
+    //   () => this.data.length,
+    //   isExist => {
+    //     if (isExist) {
+    //       this.setStatus('DONE');
+    //     } else {
+    //       this.setStatus('PENDING');
+    //     }
+    //   },
+    //   {name: 'data'},
+    // );
   }
 }
 

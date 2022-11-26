@@ -1,6 +1,6 @@
 import {action, computed, observable} from 'mobx';
 
-enum EStatus {
+export enum EStatus {
   NONE = 'NONE',
   PENDING = 'PENDING',
   DONE = 'DONE',

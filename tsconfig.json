@@ -41,6 +41,7 @@
     "paths": {
       "@models/*": ["models/*"],
       "@svg/*": ["assets/svg/*"],
+      "@anim/*": ["assets/anim/*"],
       "@utils/*": ["utils/*"],
       "@hoc/*": ["hoc/*"],
       "@hooks/*": ["hooks/*"],

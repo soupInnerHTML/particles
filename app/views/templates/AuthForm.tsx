@@ -13,13 +13,14 @@ import {EvaStatus} from '@ui-kitten/components/devsupport';
 import LoadingIndicator from '../atoms/LoadingIndicator';
 import Row from '../atoms/Row';
 import useAppNavigation from '../../hooks/useAppNavigation';
-import GoogleIcon from '../../assets/svg/google.svg';
+import GoogleIcon from '@svg/google.svg';
 import renderIf from '../../utils/renderIf';
 import {FormProvider, useForm} from 'react-hook-form';
 import ControlledInput from '../organisms/ControlledInput';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {useHeaderHeight} from '@react-navigation/elements';
 import AuthModel, {IAuth} from '../../models/mobx/AuthModel';
+import commonStyles from '../styles/commonStyles';
 
 interface IAuthFormProps {
   fields: {
@@ -83,7 +84,7 @@ const AuthForm: React.FC<IAuthFormProps> = ({
             <Row>
               <Text category={'h6'}>{link!.labelText}</Text>
               <TouchableOpacity
-                style={!resetPassword && styles.mb8}
+                style={!resetPassword && commonStyles.mb8}
                 onPress={() =>
                   navigation.navigate('Login', {screen: link!.linkTo})
                 }>
@@ -95,7 +96,7 @@ const AuthForm: React.FC<IAuthFormProps> = ({
           ))}
           {renderIf(resetPassword, () => (
             <TouchableOpacity
-              style={styles.mb8}
+              style={commonStyles.mb8}
               onPress={() => navigation.navigate('ResetPassword')}>
               <Text category={'h6'} appearance={'hint'}>
                 Forgot password?
@@ -110,7 +111,7 @@ const AuthForm: React.FC<IAuthFormProps> = ({
             ))}
             onPress={AuthModel.googleSignIn}
             status={'basic'}
-            style={styles.mb8}
+            style={commonStyles.mb8}
             accessoryLeft={() => <GoogleIcon width={23} height={23} />}>
             Google sign in
           </Button>
@@ -122,7 +123,7 @@ const AuthForm: React.FC<IAuthFormProps> = ({
           {/*  ))}*/}
           {/*  onPress={AccountModel.githubSignIn}*/}
           {/*  status={'basic'}*/}
-          {/*  style={styles.mb8}*/}
+          {/*  style={commonStyles.mb8}*/}
           {/*  // accessoryLeft={() => <GoogleIcon width={23} height={23} />}*/}
           {/*>*/}
           {/*  Github sign in*/}
@@ -152,9 +153,6 @@ const styles = ScaledSheet.create({
   },
   input: {
     marginTop: '20@vs',
-  },
-  mb8: {
-    marginBottom: '8@vs',
   },
 });
 

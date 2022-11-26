@@ -5,14 +5,12 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 
-interface IUserModelWithoutId {
+export interface IUserModelWithoutId {
   name: string;
   shortName: string;
   email: string;
-  postsOwner?: string[];
   avatar?: string;
   avatarPlaceholder: string;
-  color?: string;
   lastSeen: FirebaseFirestoreTypes.Timestamp;
   theme: Theme;
   fcmToken: string;
@@ -30,14 +28,13 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
   @observable public email?: string;
   @observable public avatar?: string;
   @observable public name?: string;
-  @observable public postsOwner?: string[];
   @observable public theme = Theme.dark;
   @observable public lastSeen?: FirebaseFirestoreTypes.Timestamp;
-  @observable public color?: string;
+  @observable private _color?: string;
   @observable public fcmToken?: string;
 
   @computed public get avatarPlaceholder() {
-    return generateAvatarPlaceholder(this.name, this.color);
+    return generateAvatarPlaceholder(this.name, this._color);
   }
   @computed public get ref() {
     if (this.id) {

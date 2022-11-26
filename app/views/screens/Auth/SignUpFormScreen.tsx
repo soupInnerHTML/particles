@@ -9,6 +9,13 @@ import AuthModel from '../../../models/mobx/AuthModel';
 
 const schema = yup.object({
   name: yup.string().required(),
+  shortName: yup
+    .string()
+    .required()
+    .matches(/^[A-Za-z0-9]+([A-Za-z0-9]*|[._-]?[A-Za-z0-9]+)*$/g, {
+      message: 'Not valid nickname, example: @ruby_soho',
+      name: 'asas',
+    }),
   repeatPassword: yup
     .string()
     .required()
@@ -27,6 +34,7 @@ const MyComponent: FC<StackItem<'SignUp'>> = () => {
         fields={[
           {name: 'email', placeholder: 'Email', type: 'email-address'},
           {name: 'name', placeholder: 'Name'},
+          {name: 'shortName', placeholder: 'Nickname'},
           {name: 'password', placeholder: 'Password', secure: true},
           {
             name: 'repeatPassword',

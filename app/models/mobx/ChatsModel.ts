@@ -1,25 +1,17 @@
 import FirestoreModel from '../abstract/FirestoreModel';
-import {
-  action,
-  computed,
-  makeObservable,
-  observable,
-  override,
-  reaction,
-  when,
-} from 'mobx';
+import {makeObservable, override, when} from 'mobx';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import AccountModel, {IUserModel} from './AccountModel';
 import AuthModel from './AuthModel';
 import {Asset} from 'react-native-image-picker';
-import {persist} from 'mobx-persist';
 import {hydrate} from '@models/persist/hydrate';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {showSuccess} from '@utils/messages';
+import {showError, showSuccess} from '@utils/messages';
 import {Alert} from 'react-native';
-import getIdAlphabetically from '@utils/getIdAlphabetically';
+import {EStatus} from '@models/abstract/ModelWithStatus';
 
 export interface IChat {
   members: FirebaseFirestoreTypes.DocumentReference<IUserModel>[];
@@ -36,8 +28,8 @@ interface IMessageMeta {
 
 export interface IMessagePayload {
   text?: string;
-  photos?: Asset[];
-  videos?: Asset[];
+  photos?: string[]; //urls
+  videos?: string[]; //urls
 }
 
 export type IMessage = IWithId<IMessageMeta & IMessagePayload>;
@@ -49,27 +41,7 @@ export enum MessageStatus {
 
 @hydrate
 class ChatsModel extends FirestoreModel<IChat> {
-  @observable searchData: IChat[] = [];
-  @observable searchPath: string = '';
-
-  @persist @computed get lastChatsCount() {
-    return this.data.length || 3;
-  }
-  @computed get placeholder(): IChat[] {
-    //TODO: refactor placeholder
-    // @ts-ignore
-    return Array.from(
-      {
-        length: this.lastChatsCount,
-      },
-      (_, index) => ({
-        members: [{}, {}],
-        id: index,
-        changed: index,
-        messageHistory: [{}],
-      }),
-    );
-  }
+  @override status: EStatus = EStatus.PENDING;
   @override
   protected get _filteredInstance() {
     return this._instance
@@ -78,6 +50,23 @@ class ChatsModel extends FirestoreModel<IChat> {
   }
   findChat(chatId: string) {
     return this.data.find(chat => chat.id === chatId);
+  }
+  async deleteChat(chatId: string) {
+    const target = firestore().collection('chats').doc(chatId);
+    const messageHistoryRef = await target.collection('messageHistory').get();
+
+    messageHistoryRef.forEach(doc => doc.ref.delete());
+    await target.delete();
+
+    const storageRef = storage().ref(chatId);
+
+    return storageRef.listAll().then(dir => {
+      dir.prefixes.forEach(folderRef =>
+        folderRef
+          .listAll()
+          .then(nested => nested.items.forEach(item => item.delete())),
+      );
+    });
   }
   sendPushNotification(
     fcmToken: string,
@@ -132,8 +121,6 @@ class ChatsModel extends FirestoreModel<IChat> {
 
     const chatRef = firestore().collection<IChat>('chats').doc(chatId);
 
-    console.log(companionId);
-
     const companionRef =
       target?.members.find(user => user.id === companionId) ??
       firestore().collection<IUserModel>('users').doc(companionId);
@@ -146,11 +133,17 @@ class ChatsModel extends FirestoreModel<IChat> {
       changed: now,
     });
 
+    const photos = message.photos
+      ? await this.uploadAssetsToStorage(message.photos, chatId)
+      : null;
+
     await chatRef.collection('messageHistory').add({
       author: AccountModel.ref,
-      status: 'UNREAD',
+      status: AccountModel.ref?.isEqual(companionRef)
+        ? MessageStatus.READ
+        : MessageStatus.UNREAD,
       text: message.text?.trim() ?? null,
-      photos: message.photos?.map(asset => asset.base64) ?? null,
+      photos,
       time: now,
     });
 
@@ -159,6 +152,40 @@ class ChatsModel extends FirestoreModel<IChat> {
       chatId,
       message,
     );
+  }
+  async uploadAssetsToStorage(assets: Asset[], chatId: string) {
+    const urls: string[] = [];
+
+    for (let asset of assets) {
+      const ref = storage().ref(
+        `/${chatId}/${AccountModel.id}/${asset.fileName}`,
+      );
+      if (asset.uri) {
+        const task = ref.putFile(asset.uri);
+        await new Promise(resolve =>
+          task.then(async () => {
+            const url = await ref.getDownloadURL();
+            urls.push(url);
+            resolve(true);
+          }),
+        );
+      } else if (asset.base64) {
+        const task = ref.putString(asset.base64, 'base64', {
+          contentType: asset.type,
+        });
+        await new Promise(resolve =>
+          task.then(async () => {
+            const url = await ref.getDownloadURL();
+            urls.push(url);
+            resolve(true);
+          }),
+        );
+      } else {
+        showError({message: 'Unable to load file to the storage'});
+      }
+    }
+
+    return urls;
   }
   getMessage(chatId: string, messageId: string) {
     return this._instance
@@ -173,8 +200,14 @@ class ChatsModel extends FirestoreModel<IChat> {
       });
     });
   }
-  deleteMessage(chatId: string, messageId: string) {
-    return this.getMessage(chatId, messageId).delete();
+  async deleteMessage(chatId: string, messageId: string) {
+    const targetRef = this.getMessage(chatId, messageId);
+    const target = await targetRef.get();
+    await targetRef.delete();
+    const data = target.data() as IMessage;
+    data.photos?.forEach(photo => {
+      storage().refFromURL(photo).delete();
+    });
   }
   editMessage(
     defaultText: string | undefined,
@@ -197,47 +230,7 @@ class ChatsModel extends FirestoreModel<IChat> {
     content && Clipboard.setString(content);
     showSuccess({message: 'Media data copied'});
   }
-  @action.bound setSearchPath(path: string) {
-    this.searchPath = path;
-  }
-  @action.bound async searchChats(path: string) {
-    this.setStatus('PENDING');
-    const prepare: IChat[] = [];
-    const promises: Promise<IChat | void>[] = [];
-    const snapshot = await firestore()
-      .collection<IUserModel>('users')
-      .where('name', '==', path)
-      .get();
 
-    snapshot.forEach(item => {
-      if (item.exists) {
-        promises.push(
-          this.imitateChatByUserRef(item.ref)
-            .then(chat => {
-              prepare.push(chat);
-            })
-            .catch(() => this.setStatus('ERROR')),
-        );
-      }
-    });
-
-    Promise.all(promises)
-      .then(() => {
-        this.searchData = prepare;
-        this.setStatus('DONE');
-      })
-      .catch(() => this.setStatus('ERROR'));
-  }
-  async imitateChatByUserRef(
-    userRef: FirebaseFirestoreTypes.DocumentReference<IUserModel>,
-  ): Promise<IChat> {
-    const me = await AccountModel.ref!.get();
-    return {
-      changed: firestore.Timestamp.now().seconds,
-      members: [me.ref, userRef],
-      id: getIdAlphabetically(me.ref.id, userRef.id),
-    };
-  }
   constructor() {
     super();
     makeObservable(this);
@@ -245,12 +238,7 @@ class ChatsModel extends FirestoreModel<IChat> {
     when(
       () => AuthModel.isAuthenticated,
       () => this._filteredInstance.onSnapshot(this._onSnapshot, this._onError),
-      {name: 'when'},
-    );
-
-    reaction(
-      () => this.searchPath,
-      path => this.searchChats(path),
+      {name: 'subscribeToChatsUpdateAfterAuthReaction'},
     );
   }
 }
