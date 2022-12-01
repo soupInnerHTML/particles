@@ -5,17 +5,22 @@ import TopNavigationHeader from '../header/TopNavigationHeader';
 import commonStackStyles from '../style/commonStackStyles';
 import {Icon, TopNavigationAction} from '@ui-kitten/components';
 import useAppNavigation from '../../hooks/useAppNavigation';
-import AccountSettingsScreen from '../../views/screens/Account/AccountSettingsScreen';
+import {useRoute} from '@react-navigation/native';
+import {IRoute} from '../navigation';
+import AccountModel from '@models/mobx/AccountModel';
 
 const Stack = createNativeStackNavigator();
 
 const AccountMainRight = () => {
   const navigation = useAppNavigation();
-  return (
+  const route = useRoute<IRoute<'Account'>>();
+  return route.params.id === AccountModel.id ? (
     <TopNavigationAction
-      onPress={() => navigation.navigate('AccountSettings')}
+      onPress={() => navigation.navigate('Settings')}
       icon={<Icon name="settings" />}
     />
+  ) : (
+    <></>
   );
 };
 
@@ -26,7 +31,7 @@ const AccountStack: React.FC = () => {
       screenOptions={{
         contentStyle: commonStackStyles,
         animation: 'slide_from_right',
-        header: ({back, navigation, options, route}) => {
+        header: ({back, navigation, options}) => {
           return (
             <TopNavigationHeader
               right={options.headerRight}
@@ -44,10 +49,10 @@ const AccountStack: React.FC = () => {
         name={'Profile'}
         component={AccountScreen}
       />
-      <Stack.Screen
-        name={'AccountSettings'}
-        component={AccountSettingsScreen}
-      />
+      {/*<Stack.Screen*/}
+      {/*  name={'AccountSettings'}*/}
+      {/*  component={AccountSettingsScreen}*/}
+      {/*/>*/}
     </Stack.Navigator>
   );
 };

@@ -19,7 +19,7 @@ const styles = ScaledSheet.create({
   mv8: {
     marginVertical: '8@vs',
   },
-  mbt6: {
+  mt16: {
     marginTop: '16@vs',
   },
   mb16: {

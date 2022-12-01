@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {Dispatch, SetStateAction, useEffect} from 'react';
 import {Icon, Input, Text} from '@ui-kitten/components';
 import {s, ScaledSheet} from 'react-native-size-matters';
 import Row from './Row';
@@ -7,20 +7,27 @@ import {observer} from 'mobx-react-lite';
 import {useIsFocused} from '@react-navigation/native';
 import SearchChatsModel from '@models/mobx/SearchChatsModel';
 import Animated, {
+  Easing,
   measure,
-  useAnimatedReaction,
   useAnimatedRef,
   useAnimatedStyle,
-  useSharedValue,
+  useDerivedValue,
   withTiming,
 } from 'react-native-reanimated';
 
 const CONTAINER_HORIZONTAL_MARGIN = s(8);
 const CANCEL_MARGIN_LEFT = s(8);
 
-const ChatsSearchInput: React.FC = () => {
+interface IChatsSearchInputProps {
+  setIsFocused: Dispatch<SetStateAction<boolean>>;
+  isCancelVisible: boolean;
+}
+
+const ChatsSearchInput: React.FC<IChatsSearchInputProps> = ({
+  setIsFocused,
+  isCancelVisible,
+}) => {
   const isNavigationFocused = useIsFocused();
-  const [isFocused, setIsFocused] = useState(false);
   const {setSearchQuery, searchQuery} = SearchChatsModel;
   const inputRef = useAnimatedRef<Input>();
   const cancelRef = useAnimatedRef<TouchableOpacity>();
@@ -36,29 +43,20 @@ const ChatsSearchInput: React.FC = () => {
     }
   }, [isNavigationFocused]);
 
-  const isCancelVisible = isFocused || searchQuery;
+  const {width: windowWidth} = useWindowDimensions();
+  const inputWidth = windowWidth - CONTAINER_HORIZONTAL_MARGIN * 2;
+  const cancelWidth = useDerivedValue(() => {
+    return measure(cancelRef)?.width ?? 0;
+  }, [isCancelVisible]);
 
-  const {width} = useWindowDimensions();
-  const inputWidth = useSharedValue(width - CONTAINER_HORIZONTAL_MARGIN * 2);
   const inputStyle = useAnimatedStyle(() => ({
-    width: inputWidth.value,
+    width: withTiming(
+      isCancelVisible
+        ? inputWidth - cancelWidth.value - CANCEL_MARGIN_LEFT
+        : inputWidth,
+      {easing: Easing.inOut(Easing.ease)},
+    ),
   }));
-
-  useAnimatedReaction(
-    () => isCancelVisible,
-    (visible, prev) => {
-      if (prev !== null && visible !== prev) {
-        const cancelMeasured = measure(cancelRef);
-        const inputMeasured = measure(inputRef);
-        if (cancelMeasured && inputMeasured) {
-          const computedWidth = visible
-            ? inputMeasured.width - cancelMeasured.width - CANCEL_MARGIN_LEFT
-            : inputMeasured.width + cancelMeasured.width + CANCEL_MARGIN_LEFT;
-          inputWidth.value = withTiming(computedWidth);
-        }
-      }
-    },
-  );
 
   return (
     <Row
@@ -89,11 +87,11 @@ const ChatsSearchInput: React.FC = () => {
 const styles = ScaledSheet.create({
   container: {
     marginHorizontal: CONTAINER_HORIZONTAL_MARGIN,
-    marginTop: '-8@vs',
+    // marginTop: '-8@vs',
     marginBottom: '8@vs',
   },
   input: {
-    borderRadius: '16@s',
+    borderRadius: '8@s',
     flexGrow: 1,
   },
   cancel: {

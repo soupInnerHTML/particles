@@ -1,4 +1,4 @@
-import {action, computed, makeObservable, observable} from 'mobx';
+import {action, computed, makeObservable, observable, reaction} from 'mobx';
 import ModelWithStatus from '../abstract/ModelWithStatus';
 import generateAvatarPlaceholder from '../../utils/generateAvatarPlaceholder';
 import firestore, {
@@ -14,6 +14,7 @@ export interface IUserModelWithoutId {
   lastSeen: FirebaseFirestoreTypes.Timestamp;
   theme: Theme;
   fcmToken: string;
+  about?: string;
 }
 
 enum Theme {
@@ -32,6 +33,7 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
   @observable public lastSeen?: FirebaseFirestoreTypes.Timestamp;
   @observable private _color?: string;
   @observable public fcmToken?: string;
+  @observable public shortName?: string;
 
   @computed public get avatarPlaceholder() {
     return generateAvatarPlaceholder(this.name, this._color);
@@ -44,6 +46,13 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
     }
   }
 
+  @action.bound setTheme(theme: keyof typeof Theme) {
+    this.theme = Theme[theme];
+    this.ref?.update({
+      theme: this.theme,
+    });
+  }
+
   @action.bound updateFcmToken(fcmToken: string) {
     firestore().collection('users').doc(this.id).update({
       fcmToken,
@@ -53,6 +62,25 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
   constructor() {
     super();
     makeObservable(this);
+
+    reaction(
+      () => this.ref,
+      ref => {
+        if (ref) {
+          ref.onSnapshot(snapshot => {
+            const user = snapshot.data();
+
+            if (user) {
+              this.name = user.name;
+              this.avatar = user.avatar;
+              this.email = user.email;
+              this.theme = user.theme;
+              this.shortName = user.shortName;
+            }
+          });
+        }
+      },
+    );
   }
 }
 

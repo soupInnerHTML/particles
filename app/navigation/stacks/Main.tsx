@@ -1,13 +1,13 @@
 import React from 'react';
-import TopNavigationHeader from '../header/TopNavigationHeader';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChatsScreen from '../../views/screens/Chats/ChatsScreen';
 import Chat from '../../views/screens/Chat/ChatScreen';
 import ChatHeader from '../header/ChatHeader';
 import {MainStackParamList} from '../navigation';
-import {StyleProp, ViewStyle} from 'react-native';
-import {Input} from '@ui-kitten/components';
-import ChatsSearchInput from '@atoms/ChatsSearchInput';
+import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
+import {Text} from '@ui-kitten/components';
+import useAppNavigation from '@hooks/useAppNavigation';
+import ChatsHeader from '../header/ChatsHeader';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -28,11 +28,15 @@ const Main: React.FC = () => {
         name={'Chats'}
         component={ChatsScreen}
         options={{
-          header: ({options}) => (
-            <TopNavigationHeader title={'Chats'} right={options.headerRight}>
-              <ChatsSearchInput />
-            </TopNavigationHeader>
-          ),
+          header: ({options}) => <ChatsHeader right={options.headerRight} />,
+          headerRight: () => {
+            const navigation = useAppNavigation();
+            return (
+              <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                <Text status={'primary'}>Settings</Text>
+              </TouchableOpacity>
+            );
+          },
         }}
       />
       <Stack.Screen

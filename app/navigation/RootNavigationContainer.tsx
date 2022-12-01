@@ -9,6 +9,9 @@ import AccountStack from './stacks/AccountStack';
 import AuthModel from '../models/mobx/AuthModel';
 import Main from './stacks/Main';
 import {useTheme} from '@ui-kitten/components';
+import AccountSettingsScreen from '@screens/Account/AccountSettingsScreen';
+import TopNavigationHeader from './header/TopNavigationHeader';
+import commonStackStyles from './style/commonStackStyles';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -28,6 +31,23 @@ const RootNavigationContainer: React.FC = () => {
         <Stack.Screen
           name={'Account'}
           component={withAuthObserver(AccountStack)}
+        />
+        <Stack.Screen
+          name={'Settings'}
+          component={AccountSettingsScreen}
+          options={{
+            contentStyle: commonStackStyles,
+            header: ({back, navigation, options}) => {
+              return (
+                <TopNavigationHeader
+                  right={options.headerRight}
+                  canGoBack={back?.title || navigation.canGoBack()}
+                  title={''}
+                  subtitle={''}
+                />
+              );
+            },
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

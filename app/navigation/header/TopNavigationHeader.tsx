@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import renderIf from '../../utils/renderIf';
 import normalizeText from '../../utils/normalizeText';
 import {
@@ -20,11 +20,12 @@ const BackAction = () => {
   );
 };
 
-interface IHeaderProps {
+export interface IHeaderProps {
   title: string;
   subtitle?: string;
   canGoBack?: any;
   right?: any;
+  Wrapper?: FC<any>;
 }
 
 const Header: React.FC<IHeaderProps> = ({
@@ -33,19 +34,22 @@ const Header: React.FC<IHeaderProps> = ({
   canGoBack,
   right,
   children,
+  Wrapper = React.Fragment,
 }) => {
   return (
     <React.Fragment>
-      <TopNavigation
-        style={styles.nav}
-        accessoryLeft={renderIf(canGoBack, () => (
-          <BackAction />
-        ))}
-        accessoryRight={right}
-        title={normalizeText(title)}
-        subtitle={subtitle}
-        alignment={'center'}
-      />
+      <Wrapper>
+        <TopNavigation
+          style={styles.nav}
+          accessoryLeft={renderIf(canGoBack, () => (
+            <BackAction />
+          ))}
+          accessoryRight={right}
+          title={normalizeText(title)}
+          subtitle={subtitle}
+          alignment={'center'}
+        />
+      </Wrapper>
       {children}
       <Divider />
     </React.Fragment>

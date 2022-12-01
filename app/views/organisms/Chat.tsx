@@ -26,7 +26,7 @@ const renderRightActions = (
   dragX: Animated.AnimatedInterpolation,
 ) => {
   return (
-    <>
+    <React.Fragment>
       <ChatSwipeAction
         color={'#3366FF'}
         icon={'book-outline'}
@@ -41,7 +41,7 @@ const renderRightActions = (
         outputInterpolate={[120, 0]}
         {...{progress, dragX}}
       />
-    </>
+    </React.Fragment>
   );
 };
 

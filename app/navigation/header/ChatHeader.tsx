@@ -2,7 +2,6 @@ import React from 'react';
 import TopNavigationHeader from './TopNavigationHeader';
 import dayjs from 'dayjs';
 import PressableAccountAvatar from '../../views/atoms/PressableAccountAvatar';
-import generateAvatarPlaceholder from '../../utils/generateAvatarPlaceholder';
 import {observer} from 'mobx-react-lite';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import useIsOnline from '../../hooks/useIsOnline';
