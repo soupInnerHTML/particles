@@ -4,7 +4,12 @@ type RootStackParamList = {
   Login: NestedStack<LoginStackParamList>;
   Main: NestedStack<MainStackParamList>;
   Account: NestedStack<AccountStackParamList>;
-  Settings: null;
+  Settings: {
+    name: string | null;
+    shortName: string | null;
+    bio: string | null;
+    save: number;
+  };
 };
 
 type NestedStack<Stack> = {screen: keyof Stack; params?: Stack[keyof Stack]};

@@ -46,7 +46,11 @@ const ChatsSearchInput: React.FC<IChatsSearchInputProps> = ({
   const {width: windowWidth} = useWindowDimensions();
   const inputWidth = windowWidth - CONTAINER_HORIZONTAL_MARGIN * 2;
   const cancelWidth = useDerivedValue(() => {
-    return measure(cancelRef)?.width ?? 0;
+    if (_WORKLET) {
+      return measure(cancelRef)?.width ?? 0;
+    } else {
+      return 0;
+    }
   }, [isCancelVisible]);
 
   const inputStyle = useAnimatedStyle(() => ({

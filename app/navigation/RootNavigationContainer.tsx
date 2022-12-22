@@ -8,21 +8,24 @@ import withAuthObserver from '../hoc/withAuthObserver';
 import AccountStack from './stacks/AccountStack';
 import AuthModel from '../models/mobx/AuthModel';
 import Main from './stacks/Main';
-import {useTheme} from '@ui-kitten/components';
 import AccountSettingsScreen from '@screens/Account/AccountSettingsScreen';
 import TopNavigationHeader from './header/TopNavigationHeader';
 import commonStackStyles from './style/commonStackStyles';
+import useBackgroundColor from '@hooks/useBackgroundColor';
+import {useStyleSheet} from '@ui-kitten/components';
+import SettingsRight from './SettingsRight';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootNavigationContainer: React.FC = () => {
-  const theme = useTheme();
+  const backgroundColor = useBackgroundColor();
+  const themed = useStyleSheet(commonStackStyles);
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
           header: () => <></>,
-          contentStyle: {backgroundColor: theme['background-basic-color-1']},
+          contentStyle: {backgroundColor},
           animation: 'slide_from_right',
         }}
         initialRouteName={AuthModel.isAuthenticated ? 'Main' : 'Login'}>
@@ -30,19 +33,34 @@ const RootNavigationContainer: React.FC = () => {
         <Stack.Screen name={'Main'} component={withAuthObserver(Main)} />
         <Stack.Screen
           name={'Account'}
+          options={{
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
+            fullScreenGestureEnabled: true,
+          }}
           component={withAuthObserver(AccountStack)}
         />
         <Stack.Screen
           name={'Settings'}
-          component={AccountSettingsScreen}
+          component={withAuthObserver(AccountSettingsScreen)}
+          initialParams={{
+            save: 0,
+            name: null,
+            bio: null,
+            shortName: null,
+          }}
           options={{
-            contentStyle: commonStackStyles,
+            contentStyle: themed.stack,
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
+            fullScreenGestureEnabled: true,
+            headerRight: () => <SettingsRight />,
             header: ({back, navigation, options}) => {
               return (
                 <TopNavigationHeader
                   right={options.headerRight}
                   canGoBack={back?.title || navigation.canGoBack()}
-                  title={''}
+                  title={'Settings'}
                   subtitle={''}
                 />
               );

@@ -19,7 +19,7 @@ import showContextActions from '@utils/showContextActions';
 import {noop} from 'lodash';
 import vibrate from '@utils/vibrate';
 
-LogBox.ignoreAllLogs();
+// LogBox.ignoreAllLogs();
 
 const renderRightActions = (
   progress: Animated.AnimatedInterpolation,

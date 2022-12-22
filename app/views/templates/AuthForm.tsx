@@ -116,26 +116,13 @@ const AuthForm: React.FC<IAuthFormProps> = ({
             Google sign in
           </Button>
 
-          {/*<Button*/}
-          {/*  disabled={AccountModel.isPending}*/}
-          {/*  accessoryRight={renderIf(AccountModel.isGoogleSignIn, () => (*/}
-          {/*    <LoadingIndicator />*/}
-          {/*  ))}*/}
-          {/*  onPress={AccountModel.githubSignIn}*/}
-          {/*  status={'basic'}*/}
-          {/*  style={commonStyles.mb8}*/}
-          {/*  // accessoryLeft={() => <GoogleIcon width={23} height={23} />}*/}
-          {/*>*/}
-          {/*  Github sign in*/}
-          {/*</Button>*/}
-
           <Button
             status={button.type}
             accessoryRight={renderIf(AuthModel.isSimpleSignIn, () => (
               <LoadingIndicator />
             ))}
             disabled={AuthModel.isPending}
-            onPress={methods.handleSubmit(() => onSubmit(methods.getValues()))}>
+            onPress={methods.handleSubmit(onSubmit)}>
             {button.title}
           </Button>
         </View>

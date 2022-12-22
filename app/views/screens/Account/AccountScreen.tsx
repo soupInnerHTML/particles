@@ -16,6 +16,7 @@ const AccountScreen: React.FC<StackItem<'Profile'>> = ({route}) => {
   const user = useFirestoreUser(id);
   const {seconds} = user?.lastSeen || {};
   const isOnline = useIsOnline(seconds ?? 0);
+  console.log(user);
   return (
     <Layout style={{flex: 1}}>
       <View style={styles.headerContainer}>
@@ -29,7 +30,9 @@ const AccountScreen: React.FC<StackItem<'Profile'>> = ({route}) => {
         </View>
         <Text category={'h1'}>{user?.name}</Text>
         <Text category={'h6'}>{'@' + user?.shortName}</Text>
-        <Text style={commonStyles.mt8}>{'ℹ️✏️ ' + user?.about}</Text>
+        {!!user?.bio && (
+          <Text style={commonStyles.mt8}>{'ℹ️✏️ ' + user.bio}</Text>
+        )}
 
         {!isOnline && (
           <Text style={[commonStyles.mt16]}>{getLastSeen(seconds ?? 0)}</Text>

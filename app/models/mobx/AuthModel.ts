@@ -1,11 +1,11 @@
-// import {hydrate} from './persist/hydrate';
 import {action, computed, makeObservable, observable} from 'mobx';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import ModelWithStatus from '../abstract/ModelWithStatus';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {showFirebaseError, showSuccess} from '@utils/messages';
-import AccountModel, {IUserModel} from './AccountModel';
+import AccountModel, {IUserModelServer} from './AccountModel';
 import firestore from '@react-native-firebase/firestore';
+import generateRandomColor from '@utils/generateRandomColor';
 
 export interface IAuth {
   email: string;
@@ -23,7 +23,6 @@ enum ESignInMethods {
   GOOGLE,
 }
 
-// @hydrate
 class AuthModel extends ModelWithStatus {
   @observable public signMethod = ESignInMethods.NONE;
 
@@ -43,16 +42,16 @@ class AuthModel extends ModelWithStatus {
     const credential = await this._tryAuth(() =>
       auth().createUserWithEmailAndPassword(params.email, params.password),
     );
-    AccountModel.name = params.name;
 
     if (credential) {
-      await AuthModel._duplicateUserToFirestore({
-        name: AccountModel.name,
-        avatar: AccountModel.avatar || AccountModel.avatarPlaceholder,
-        email: AccountModel.email!,
-        id: AccountModel.id!,
+      await this._duplicateUserToFirestore({
+        name: params.name,
+        avatar: '',
+        email: params.email,
+        id: credential.user.uid,
         lastSeen: firestore.Timestamp.now(),
         shortName: params.shortName,
+        color: generateRandomColor(),
       });
     }
   };
@@ -64,11 +63,17 @@ class AuthModel extends ModelWithStatus {
     );
   };
 
-  private static async _duplicateUserToFirestore({id, ...user}: IUserModel) {
-    await firestore()
-      .collection<Omit<IUserModel, 'id'>>('users')
-      .doc(id)
-      .set(user);
+  private async _duplicateUserToFirestore({
+    id,
+    ...user
+  }: IWithId<IUserModelServer>) {
+    const ref = firestore().collection<IUserModelServer>('users').doc(id);
+    const _user = await ref.get();
+    if (_user.exists) {
+      await ref.update(user);
+    } else {
+      await ref.set(user);
+    }
   }
 
   public googleSignIn = async () => {
@@ -88,23 +93,13 @@ class AuthModel extends ModelWithStatus {
       )) || {};
 
     user &&
-      (await AuthModel._duplicateUserToFirestore({
+      (await this._duplicateUserToFirestore({
         email: user.email!,
         name: user.displayName!,
         lastSeen: firestore.Timestamp.now(),
         id: user.uid,
         avatar: user.photoURL!,
-        color: 'red',
       }));
-  };
-
-  public githubSignIn = async () => {
-    const provider = auth.GithubAuthProvider.credential(
-      '467302315890-rjojkpn1elfp9i4oet8bif2ja0nt1e31.apps.googleusercontent.com',
-      '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',
-    );
-
-    console.log(provider.token);
   };
 
   private async _tryAuth(
@@ -123,19 +118,9 @@ class AuthModel extends ModelWithStatus {
     }
   }
 
-  public async signOut() {
-    await auth().signOut();
-    AccountModel.id = undefined;
+  public signOut() {
+    return auth().signOut();
   }
-
-  // private _onAuthStateChanged = (user: Maybe<FirebaseAuthTypes.User>) => {
-  //   this.id = user?.uid;
-  //   this.email = user?.email!;
-  //   this.name = user?.displayName!;
-  //   this.avatar = user?.photoURL!;
-  //
-  //   console.log(this);
-  // };
 
   sendPasswordResetEmail = async (params: IAuth) => {
     try {
@@ -151,17 +136,11 @@ class AuthModel extends ModelWithStatus {
 
   @action.bound private _onUserChanged(user: Maybe<FirebaseAuthTypes.User>) {
     AccountModel.id = user?.uid;
-    AccountModel.email = user?.email!;
-    AccountModel.name = user?.displayName!;
-    AccountModel.avatar = user?.photoURL!;
-
-    // console.log(this);
   }
 
   constructor() {
     super();
     makeObservable(this);
-    // auth().onAuthStateChanged(this._onUserChanged);
     auth().onUserChanged(this._onUserChanged);
   }
 }

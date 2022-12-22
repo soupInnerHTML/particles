@@ -7,7 +7,6 @@ import storage from '@react-native-firebase/storage';
 import AccountModel, {IUserModel} from './AccountModel';
 import AuthModel from './AuthModel';
 import {Asset} from 'react-native-image-picker';
-import {hydrate} from '@models/persist/hydrate';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {showError, showSuccess} from '@utils/messages';
 import {Alert} from 'react-native';
@@ -39,7 +38,6 @@ export enum MessageStatus {
   UNREAD = 'UNREAD',
 }
 
-@hydrate
 class ChatsModel extends FirestoreModel<IChat> {
   @override status: EStatus = EStatus.PENDING;
   @override

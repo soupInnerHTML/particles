@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import ChatsModel from '@models/mobx/ChatsModel';
@@ -9,10 +9,12 @@ import {Button, Text} from '@ui-kitten/components';
 import {observer} from 'mobx-react-lite';
 import SearchChatsModel from '@models/mobx/SearchChatsModel';
 import EmptyAnim from '@anim/empty.json';
+import useLottieEternal from '@hooks/useLottieEternal';
 
 const EmptyChats: React.FC = () => {
+  const ref = useLottieEternal();
   return ChatsModel.isPending || SearchChatsModel.isPending ? (
-    <>
+    <React.Fragment>
       <View style={chatStyles.chat}>
         <ChatPlaceholder />
       </View>
@@ -22,11 +24,17 @@ const EmptyChats: React.FC = () => {
       <View style={chatStyles.chat}>
         <ChatPlaceholder />
       </View>
-    </>
+    </React.Fragment>
   ) : (
-    <>
+    <React.Fragment>
       <View style={styles.lottie}>
-        <LottieView source={EmptyAnim} style={{height: '100%'}} autoPlay loop />
+        <LottieView
+          ref={ref}
+          source={EmptyAnim}
+          style={{height: '100%'}}
+          autoPlay
+          loop
+        />
       </View>
       <Text category={'h3'} style={styles.emptyTitle}>
         Chats not found
@@ -43,7 +51,7 @@ const EmptyChats: React.FC = () => {
           Search
         </Button>
       )}
-    </>
+    </React.Fragment>
   );
 };
 

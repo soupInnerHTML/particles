@@ -9,9 +9,13 @@ import SmoothView from '../atoms/SmoothView';
 import Row from '../atoms/Row';
 import renderIf from '../../utils/renderIf';
 
-const ControlledInput: FC<InputProps & Omit<ControllerProps, 'render'>> = ({
+type IControlledInputProps = InputProps &
+  Omit<ControllerProps, 'render'> & {cleanable?: boolean};
+
+const ControlledInput: FC<IControlledInputProps> = ({
   name,
   control,
+  cleanable = true,
   ...props
 }) => {
   const [tempSecureTextEntry, setTempSecureTextEntry] = React.useState(
@@ -27,6 +31,7 @@ const ControlledInput: FC<InputProps & Omit<ControllerProps, 'render'>> = ({
       iconProps={iconProps}
       name={name}
       secure={props.secureTextEntry}
+      cleanable={cleanable}
       secureTextEntry={tempSecureTextEntry}
       {...{toggleSecureEntry}}
     />

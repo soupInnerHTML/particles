@@ -1,10 +1,13 @@
-import {ScaledSheet} from 'react-native-size-matters';
+import {vs} from 'react-native-size-matters';
+import {StyleSheet} from 'react-native';
 
-const styles = ScaledSheet.create({
+const PADDING_HORIZONTAL = vs(16);
+
+const styles = StyleSheet.create({
   stack: {
-    backgroundColor: '#fff',
-    marginHorizontal: '16@s',
+    backgroundColor: 'background-basic-color-1',
+    paddingHorizontal: PADDING_HORIZONTAL,
   },
 });
 
-export default styles.stack;
+export default styles;

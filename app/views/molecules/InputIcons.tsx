@@ -12,6 +12,7 @@ interface IInputIconsProps {
   toggleSecureEntry: () => void;
   name: string;
   iconProps: unknown;
+  cleanable?: boolean;
 }
 
 const InputIcons: FC<IInputIconsProps> = ({
@@ -20,15 +21,18 @@ const InputIcons: FC<IInputIconsProps> = ({
   secureTextEntry,
   name,
   iconProps,
+  cleanable = true,
 }) => {
   const {setValue, getValues} = useFormContext();
   const isNotEmpty = getValues()[name];
   return renderIf(isNotEmpty, () => (
     <SmoothView>
       <Row>
-        <TouchableOpacity onPress={() => setValue(name, '')}>
-          <Icon {...iconProps} name={'close'} />
-        </TouchableOpacity>
+        {cleanable && (
+          <TouchableOpacity onPress={() => setValue(name, '')}>
+            <Icon {...iconProps} name={'close'} />
+          </TouchableOpacity>
+        )}
         {secure && (
           <TouchableOpacity onPress={toggleSecureEntry}>
             <Icon {...iconProps} name={secureTextEntry ? 'eye-off' : 'eye'} />

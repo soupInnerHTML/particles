@@ -10,6 +10,7 @@ type IChatAvatarProps = Omit<IChatComponentsProps, 'lastMessage'>;
 
 const ChatAvatar: React.FC<IChatAvatarProps> = ({companion}) => {
   const isOnline = useIsOnline(companion?.lastSeen?.seconds ?? 0);
+  console.log(companion);
   return (
     <View>
       <Avatar

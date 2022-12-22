@@ -4,18 +4,24 @@ import generateAvatarPlaceholder from '../../utils/generateAvatarPlaceholder';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
+import {noop} from 'lodash';
+import {showError} from '@utils/messages';
 
-export interface IUserModelWithoutId {
+export interface IUserModelServer {
   name: string;
-  shortName: string;
+  shortName?: string;
   email: string;
   avatar?: string;
-  avatarPlaceholder: string;
   lastSeen: FirebaseFirestoreTypes.Timestamp;
-  theme: Theme;
-  fcmToken: string;
-  about?: string;
+  theme?: Theme;
+  fcmToken?: string;
+  bio?: string;
+  color?: string;
 }
+
+export type IUserModelWithoutId = Omit<IUserModelServer, 'color'> & {
+  avatarPlaceholder: string;
+};
 
 enum Theme {
   'dark' = 'dark',
@@ -34,13 +40,20 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
   @observable private _color?: string;
   @observable public fcmToken?: string;
   @observable public shortName?: string;
+  @observable public bio?: string;
+
+  get instance() {
+    return;
+  }
 
   @computed public get avatarPlaceholder() {
-    return generateAvatarPlaceholder(this.name, this._color);
+    return generateAvatarPlaceholder(this.name, 'ff0000');
   }
+
+  private _unsubRef: () => void = noop;
   @computed public get ref() {
     if (this.id) {
-      return firestore().collection<IUserModel>('users').doc(this.id);
+      return firestore().collection<IUserModelServer>('users').doc(this.id);
     } else {
       return null;
     }
@@ -54,9 +67,29 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
   }
 
   @action.bound updateFcmToken(fcmToken: string) {
-    firestore().collection('users').doc(this.id).update({
-      fcmToken,
-    });
+    return this.updateData({fcmToken});
+  }
+
+  @action.bound updateData(data: IMaybe<IUserModelServer>) {
+    return this.ref?.update(data);
+  }
+
+  @action.bound checkShortName(callback: (...a: any[]) => unknown) {
+    return async (data: IMaybe<IUserModelServer>) => {
+      if (data.shortName === this.shortName) {
+        return callback(data);
+      }
+      const matches = await firestore()
+        .collection<IUserModelServer>('users')
+        .where('shortName', '==', data.shortName)
+        .get();
+
+      if (matches.empty) {
+        callback(data);
+      } else {
+        showError({message: 'Nickname already used by another person'});
+      }
+    };
   }
 
   constructor() {
@@ -65,19 +98,24 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
 
     reaction(
       () => this.ref,
-      ref => {
-        if (ref) {
-          ref.onSnapshot(snapshot => {
-            const user = snapshot.data();
+      (ref, prev) => {
+        if (ref?.id !== prev?.id) {
+          this._unsubRef();
+          if (ref) {
+            this._unsubRef = ref.onSnapshot(snapshot => {
+              const user = snapshot.data();
 
-            if (user) {
-              this.name = user.name;
-              this.avatar = user.avatar;
-              this.email = user.email;
-              this.theme = user.theme;
-              this.shortName = user.shortName;
-            }
-          });
+              if (user) {
+                this.name = user.name;
+                this.avatar = user.avatar;
+                this.email = user.email;
+                this.theme = user.theme ?? Theme.dark;
+                this.shortName = user.shortName;
+                this._color = user.color;
+                this.bio = user.bio;
+              }
+            });
+          }
         }
       },
     );

@@ -31,6 +31,9 @@ const AccountStack: React.FC = () => {
       screenOptions={{
         contentStyle: commonStackStyles,
         animation: 'slide_from_right',
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        fullScreenGestureEnabled: true,
         header: ({back, navigation, options}) => {
           return (
             <TopNavigationHeader

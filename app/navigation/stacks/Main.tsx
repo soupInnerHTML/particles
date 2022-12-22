@@ -4,10 +4,10 @@ import ChatsScreen from '../../views/screens/Chats/ChatsScreen';
 import Chat from '../../views/screens/Chat/ChatScreen';
 import ChatHeader from '../header/ChatHeader';
 import {MainStackParamList} from '../navigation';
-import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
-import {Text} from '@ui-kitten/components';
+import {StyleProp, ViewStyle} from 'react-native';
 import useAppNavigation from '@hooks/useAppNavigation';
 import ChatsHeader from '../header/ChatsHeader';
+import TextButton from '@atoms/TextButton';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -32,9 +32,9 @@ const Main: React.FC = () => {
           headerRight: () => {
             const navigation = useAppNavigation();
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-                <Text status={'primary'}>Settings</Text>
-              </TouchableOpacity>
+              <TextButton onPress={() => navigation.navigate('Settings')}>
+                Settings
+              </TextButton>
             );
           },
         }}

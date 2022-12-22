@@ -1,8 +1,9 @@
 import React, {useEffect} from 'react';
 import {observer} from 'mobx-react-lite';
 import useAppNavigation from '../hooks/useAppNavigation';
-import {useRoute} from '@react-navigation/native';
+import {CommonActions, useRoute} from '@react-navigation/native';
 import AuthModel from '../models/mobx/AuthModel';
+import {Platform} from 'react-native';
 
 const withAuthObserver = (Component: React.FC<any>) =>
   observer((props: any) => {
@@ -15,11 +16,18 @@ const withAuthObserver = (Component: React.FC<any>) =>
 
     useEffect(() => {
       if (!isComponentMatch) {
-        navigation.reset({
+        if (Platform.OS === 'ios') {
           // @ts-ignore
-          index: 0,
-          routes: [{name: isAuthenticated ? 'Main' : 'Login'}],
-        });
+          navigation.navigate(isAuthenticated ? 'Main' : 'Login');
+        }
+        if (Platform.OS === 'android') {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: isAuthenticated ? 'Main' : 'Login'}],
+            }),
+          );
+        }
       }
     }, [isAuthenticated, isComponentMatch]);
     return <Component {...props} />;

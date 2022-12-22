@@ -6,15 +6,17 @@ import {LoginStackParamList} from '../navigation';
 import ResetPasswordScreen from '../../views/screens/Auth/ResetPasswordScreen';
 import TopNavigationHeader from '../header/TopNavigationHeader';
 import commonStackStyles from '../style/commonStackStyles';
+import {useStyleSheet} from '@ui-kitten/components';
 
 const Stack = createNativeStackNavigator<LoginStackParamList>();
 
 const LoginStack: React.FC = () => {
+  const themed = useStyleSheet(commonStackStyles);
   return (
     <Stack.Navigator
       initialRouteName="SignIn"
       screenOptions={{
-        contentStyle: commonStackStyles,
+        contentStyle: themed.stack,
         gestureEnabled: true,
         gestureDirection: 'horizontal',
         fullScreenGestureEnabled: true,
