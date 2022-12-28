@@ -16,9 +16,53 @@
       "oauth_client": [
         {
           "client_id": "467302315890-8232ts0f7r6qli8m6phdve9h7ti6svbm.apps.googleusercontent.com",
-          "client_type": 1,
+          "client_type": 3,
           "android_info": {
             "package_name": "com.particles",
+            "certificate_hash": "74263e5fa64d1475dfb2cd6fe1b04e7836472d53"
+          }
+        },
+        {
+          "client_id": "467302315890-rjojkpn1elfp9i4oet8bif2ja0nt1e31.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFksR59qMfEbo7qDqYKt0_HeLlQZ1h-mY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "467302315890-rjojkpn1elfp9i4oet8bif2ja0nt1e31.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "467302315890-291cno30550ana6d2ptata5qob3l7mhh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.Ripple"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467302315890:android:2b1656688ee22e89044feb",
+        "android_client_info": {
+          "package_name": "io.github.soupinnerhtml.particles"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "467302315890-n4o0t16h7kssdnlo96q14pvrb32ors2c.apps.googleusercontent.com",
+          "client_type": 3,
+          "android_info": {
+            "package_name": "io.github.soupinnerhtml.particles",
             "certificate_hash": "74263e5fa64d1475dfb2cd6fe1b04e7836472d53"
           }
         },

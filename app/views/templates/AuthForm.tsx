@@ -18,7 +18,6 @@ import renderIf from '../../utils/renderIf';
 import {FormProvider, useForm} from 'react-hook-form';
 import ControlledInput from '../organisms/ControlledInput';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {useHeaderHeight} from '@react-navigation/elements';
 import AuthModel, {IAuth} from '../../models/mobx/AuthModel';
 import commonStyles from '../styles/commonStyles';
 
@@ -59,8 +58,6 @@ const AuthForm: React.FC<IAuthFormProps> = ({
     resolver: yupResolver(schema),
   });
 
-  const headerHeight = useHeaderHeight();
-
   return (
     <Layout style={{flex: 1}}>
       <FormProvider {...methods}>
@@ -76,7 +73,6 @@ const AuthForm: React.FC<IAuthFormProps> = ({
             key={field.name}
             placeholder={field.placeholder}
             keyboardType={field.type}
-            style={styles.input}
           />
         ))}
         <View style={styles.submit}>
@@ -137,9 +133,6 @@ const styles = ScaledSheet.create({
     bottom: '32@vs',
     right: 0,
     left: 0,
-  },
-  input: {
-    marginTop: '20@vs',
   },
 });
 

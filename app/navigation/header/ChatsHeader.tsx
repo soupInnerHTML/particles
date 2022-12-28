@@ -12,7 +12,7 @@ import SearchChatsModel from '@models/mobx/SearchChatsModel';
 import {observer} from 'mobx-react-lite';
 import {vs} from 'react-native-size-matters';
 
-const HEADER_HEIGHT = vs(38);
+const HEADER_HEIGHT = vs(45);
 
 const ChatsHeader: React.FC<IMaybe<IHeaderProps>> = ({right}) => {
   const [isFocused, setIsFocused] = useState(false);

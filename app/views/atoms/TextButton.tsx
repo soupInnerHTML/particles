@@ -5,10 +5,15 @@ import {Text, TextProps} from '@ui-kitten/components';
 const TextButton: React.FC<TouchableOpacityProps & TextProps> = ({
   children,
   onPress,
+  disabled,
+  status = 'primary',
+  ...props
 }) => {
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Text status={'primary'}>{children}</Text>
+    <TouchableOpacity {...{disabled, onPress}} {...props}>
+      <Text status={disabled ? undefined : status} appearance={'hint'}>
+        {children}
+      </Text>
     </TouchableOpacity>
   );
 };

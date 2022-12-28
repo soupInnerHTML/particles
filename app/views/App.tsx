@@ -17,7 +17,10 @@ import AccountModel from '@models/mobx/AccountModel';
 import {gestureHandlerRootHOC} from 'react-native-gesture-handler';
 import {compose} from 'lodash/fp';
 
-GoogleSignin.configure();
+GoogleSignin.configure({
+  webClientId:
+    '467302315890-rjojkpn1elfp9i4oet8bif2ja0nt1e31.apps.googleusercontent.com',
+});
 
 const App: React.FC = () => {
   useEffect(() => {

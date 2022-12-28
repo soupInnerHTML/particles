@@ -1,6 +1,21 @@
 import {ScaledSheet} from 'react-native-size-matters';
 
 const styles = ScaledSheet.create({
+  full: {
+    flex: 1,
+  },
+  mta: {
+    marginTop: 'auto',
+  },
+  mba: {
+    marginBottom: 'auto',
+  },
+  mla: {
+    marginLeft: 'auto',
+  },
+  mra: {
+    marginRight: 'auto',
+  },
   mt8: {
     marginTop: '8@vs',
   },

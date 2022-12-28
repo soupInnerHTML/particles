@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo} from 'react';
 import {Keyboard, ListRenderItem, View} from 'react-native';
 import Animated, {Layout} from 'react-native-reanimated';
-import ChatsModel, {IMessage} from '@models/mobx/ChatsModel';
+import ChatsModel, {IMessage, MessageStatus} from '@models/mobx/ChatsModel';
 import dayjs from 'dayjs';
 import {getDateRelativeToYear} from '@utils/index';
 import ChipsText from '@atoms/ChipsText';
@@ -29,12 +29,20 @@ const keyExtractor = (item: string | IMessage) =>
 
 const ChatMessages: React.FC = () => {
   const {
-    params: {id},
+    params: {id, userId},
   } = useRoute<IRoute<'Chat'>>();
   const messageHistory = useFirestoreMessageHistory(id);
 
+  console.log('render');
+
   useEffect(() => {
-    ChatsModel.readMessages(id);
+    const unread =
+      messageHistory
+        ?.filter(
+          m => m.status === MessageStatus.UNREAD && m.author?.id === userId,
+        )
+        .map(m => m.id) || [];
+    ChatsModel.readMessages(id, ...unread);
   }, [messageHistory?.length]);
 
   const sections = useMemo(() => {

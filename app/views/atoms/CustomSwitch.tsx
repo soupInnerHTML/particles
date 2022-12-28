@@ -7,23 +7,29 @@ import commonStyles from '../styles/commonStyles';
 interface ICustomSwitchProps {
   text: string;
   checked: boolean;
-  onChange: (checked: boolean) => unknown;
+  onChange: (checked: boolean) => void | Promise<void>;
+  disabled?: boolean;
 }
 
 const CustomSwitch: React.FC<ICustomSwitchProps> = ({
   text,
   checked,
   onChange,
+  disabled,
 }) => {
   return (
-    <Row alignItems={'center'} style={commonStyles.mt8}>
+    <Row alignItems={'center'} style={commonStyles.mt16}>
       {Platform.OS !== 'ios' ? (
         <React.Fragment>
-          <Switch onValueChange={onChange} value={checked} />
+          <Switch
+            disabled={disabled}
+            onValueChange={onChange}
+            value={checked}
+          />
           <Text>{text}</Text>
         </React.Fragment>
       ) : (
-        <Toggle {...{onChange, checked}}>
+        <Toggle {...{onChange, checked, disabled}}>
           <Text>{text}</Text>
         </Toggle>
       )}

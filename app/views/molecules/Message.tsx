@@ -39,6 +39,15 @@ function openContextActions(
   ]);
 }
 
+function openCompanionContextActions(text: string | undefined) {
+  showContextActions([
+    {
+      title: 'Copy',
+      callback: () => ChatsModel.copyMessage(text),
+    },
+  ]);
+}
+
 const Message: React.FC<IMessage> = ({
   text,
   author,
@@ -59,61 +68,62 @@ const Message: React.FC<IMessage> = ({
   } = useRoute<IRoute<'Chat'>>();
 
   return (
-    <VisibilitySensor
-      onChange={() => {
-        if (author?.id !== AccountModel.id && status !== MessageStatus.READ) {
-          ChatsModel.readMessages(chatId, id);
+    // <VisibilitySensor
+    //   onChange={() => {
+    //     if (author?.id !== AccountModel.id && status !== MessageStatus.READ) {
+    //       ChatsModel.readMessages(chatId, id);
+    //     }
+    //   }}>
+    <Animated.View entering={isOwn ? SlideInRight : SlideInLeft}>
+      <TouchableOpacity
+        onLongPress={() =>
+          isOwn
+            ? openContextActions(chatId, id, text)
+            : openCompanionContextActions(text)
         }
-      }}>
-      <Animated.View entering={isOwn ? SlideInRight : SlideInLeft}>
-        <TouchableOpacity
-          onLongPress={() => openContextActions(chatId, id, text)}
-          style={[
-            styles.message,
-            isOwn ? styles.messageRight : styles.messageLeft,
-            photos?.length && !text
-              ? {}
-              : {
-                  backgroundColor: isOwn
-                    ? theme['color-primary-500']
-                    : theme['color-success-600'],
-                },
-          ]}>
-          {photos?.map(photo => (
-            <ImageModal
-              modalImageResizeMode={'contain'}
-              source={{uri: photo}}
-              style={styles.image}
-            />
-          ))}
-          <View
-            style={[
-              styles.messageTextData,
-              !text && styles.absMessageTextData,
-            ]}>
-            <Text status={'control'}>{text}</Text>
-            <Row
-              alignItems={'flex-end'}
-              justifyContent={isOwn ? 'flex-end' : 'flex-start'}>
-              {edited && (
-                <Text status={'control'} style={styles.edited}>
-                  edited
-                </Text>
-              )}
-              <Text status={'control'} style={styles.time}>
-                {messageTime}
+        style={[
+          styles.message,
+          isOwn ? styles.messageRight : styles.messageLeft,
+          photos?.length && !text
+            ? {}
+            : {
+                backgroundColor: isOwn
+                  ? theme['color-primary-500']
+                  : theme['color-success-600'],
+              },
+        ]}>
+        {photos?.map(photo => (
+          <ImageModal
+            modalImageResizeMode={'contain'}
+            source={{uri: photo}}
+            style={styles.image}
+          />
+        ))}
+        <View
+          style={[styles.messageTextData, !text && styles.absMessageTextData]}>
+          <Text status={'control'}>{text}</Text>
+          <Row
+            alignItems={'flex-end'}
+            justifyContent={isOwn ? 'flex-end' : 'flex-start'}>
+            {edited && (
+              <Text status={'control'} style={styles.edited}>
+                edited
               </Text>
-              <ReadStatusIcon
-                status={status}
-                fill={theme['color-basic-100']}
-                width={16}
-                height={16}
-              />
-            </Row>
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
-    </VisibilitySensor>
+            )}
+            <Text status={'control'} style={styles.time}>
+              {messageTime}
+            </Text>
+            <ReadStatusIcon
+              status={status}
+              fill={theme['color-basic-100']}
+              width={16}
+              height={16}
+            />
+          </Row>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
+    // </VisibilitySensor>
   );
 };
 

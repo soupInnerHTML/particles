@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {Button, Icon, Layout} from '@ui-kitten/components';
+import React, {useEffect, useMemo} from 'react';
+import {Button, Icon, Layout, Text} from '@ui-kitten/components';
 import {observer} from 'mobx-react-lite';
 import AuthModel from '../../../models/mobx/AuthModel';
 import AccountModel from '@models/mobx/AccountModel';
@@ -11,6 +11,8 @@ import ControlledInput from '@organisms/ControlledInput';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {StackItem} from '../../../navigation/navigation';
+import {Platform, View} from 'react-native';
+import {ScaledSheet} from 'react-native-size-matters';
 
 const createObject = (arr: any[], key1: string, key2: string) => {
   return Object.fromEntries(arr.map(item => [item[key1], item[key2]]));
@@ -20,72 +22,125 @@ const AccountSettingsScreen: React.FC<StackItem<'Settings'>> = ({
   navigation,
   route,
 }) => {
-  const schema = [
-    {
-      name: 'name',
-      placeholder: 'Name',
-      value: AccountModel.name,
-      rule: yup.string().required(),
-    },
-    {
-      name: 'shortName',
-      placeholder: 'Nickname',
-      value: AccountModel.shortName,
-      rule: yup
-        .string()
-        .required()
-        .matches(/^[A-Za-z0-9]+([A-Za-z0-9]*|[._-]?[A-Za-z0-9]+)*$/g, {
-          message: 'Not valid nickname, example: @ruby_soho',
-          name: 'asas',
-        }),
-    },
-    {
-      name: 'bio',
-      placeholder: 'BIO',
-      value: AccountModel.bio,
-      rule: yup.string().max(60),
-    },
-  ];
+  const schema = useMemo(() => {
+    return [
+      {
+        name: 'name',
+        placeholder: 'Name',
+        value: AccountModel.name,
+        icon: 'person',
+        rule: yup.string().required(),
+      },
+      {
+        name: 'shortName',
+        placeholder: 'Nickname, example: elon_musk',
+        value: AccountModel.shortName,
+        icon: 'at',
+        rule: yup
+          .string()
+          .required('Nickname is a required field')
+          .matches(/^[A-Za-z0-9]+([A-Za-z0-9]*|[._-]?[A-Za-z0-9]+)*$/g, {
+            message: 'Not a valid nickname',
+            name: 'asas',
+          }),
+      },
+      {
+        name: 'bio',
+        placeholder: 'BIO, example: 20 y.o. kavkaz developer',
+        value: AccountModel.bio,
+        icon: 'hash',
+        rule: yup.string().max(60),
+      },
+    ];
+  }, []);
 
   const form = useForm({
     mode: 'onTouched',
     defaultValues: createObject(schema, 'name', 'value'),
-    resolver: yupResolver(createObject(schema, 'name', 'rule')),
+    resolver: yupResolver(yup.object(createObject(schema, 'name', 'rule'))),
   });
+  console.log('render');
+
   useEffect(() => {
-    form.handleSubmit(AccountModel.checkShortName(AccountModel.updateData))();
+    setTimeout(() => {
+      const {isDirty} = form.formState;
+      if (route.params.changed !== isDirty) {
+        navigation.setParams({
+          changed: isDirty,
+        });
+      }
+    });
+  }, [form.formState.isDirty]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const {isValid} = form.formState;
+      if (isValid !== route.params.valid) {
+        navigation.setParams({
+          valid: isValid,
+        });
+      }
+    });
+  }, [form.formState.isValidating]);
+
+  useEffect(() => {
+    form
+      .handleSubmit(AccountModel.checkShortName(AccountModel.updateData))()
+      .then(() => {
+        navigation.setParams({changed: false});
+      });
   }, [route.params?.save]);
+
   return (
-    <Layout style={{flex: 1}}>
+    <Layout style={commonStyles.full}>
+      <Text style={[commonStyles.mt16, styles.accTitle]} category={'h6'}>
+        Account details
+      </Text>
       <FormProvider {...form}>
         {schema.map(input => (
           <ControlledInput
             key={input.name}
-            accessoryLeft={props => <Icon name={'person'} {...props} />}
-            style={commonStyles.mv8}
+            accessoryLeft={props => <Icon name={input.icon} {...props} />}
             placeholder={input.placeholder}
             name={input.name}
-            onChangeText={name => navigation.setParams({[input.name]: name})}
             cleanable={false}
-            autoCapitalize={'words'}
+            autoCapitalize={'none'}
           />
         ))}
       </FormProvider>
 
-      <CustomSwitch
-        text={'Dark theme'}
-        onChange={value => AccountModel.setTheme(value ? 'dark' : 'light')}
-        checked={AccountModel.theme === 'dark'}
-      />
-      <CustomSwitch text={'Mute all chats'} onChange={noop} checked={false} />
-      <Button
-        status={'danger'}
-        onPress={AuthModel.signOut}
-        style={commonStyles.mt16}>
-        Sign out
-      </Button>
+      <View style={[commonStyles.mv16, commonStyles.full]}>
+        <Text style={commonStyles.mt16} category={'h6'}>
+          Miscellaneous
+        </Text>
+
+        <CustomSwitch
+          text={'Dark theme'}
+          onChange={value => AccountModel.setTheme(value ? 'dark' : 'light')}
+          checked={AccountModel.theme === 'dark'}
+        />
+        <CustomSwitch
+          text={'Notifications enabled'}
+          onChange={AccountModel.setNotificationsEnabled}
+          checked={AccountModel.notificationsEnabled}
+          disabled={Platform.OS === 'ios'}
+        />
+
+        <Button
+          status={'danger'}
+          onPress={AuthModel.signOut}
+          style={commonStyles.mta}>
+          Sign out
+        </Button>
+      </View>
     </Layout>
   );
 };
+
+const styles = ScaledSheet.create({
+  accTitle: {
+    marginBottom: '-8@vs',
+  },
+});
 
 export default observer(AccountSettingsScreen);

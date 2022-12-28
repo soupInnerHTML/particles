@@ -1,33 +1,31 @@
 import React from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {INavigation, IRoute} from './navigation';
-import acc from '@models/mobx/AccountModel';
-import renderIf from '@utils/renderIf';
-import SmoothView from '@atoms/SmoothView';
 import TextButton from '@atoms/TextButton';
-import {observer} from 'mobx-react-lite';
+import {ScaledSheet} from 'react-native-size-matters';
 
 const SettingsRight: React.FC = () => {
   const navigation = useNavigation<INavigation<'Settings'>>();
-  const {params} = useRoute<IRoute<'Settings'>>();
-  const {save, shortName, name, bio} = params || {};
+  const {
+    params: {save, changed, valid},
+  } = useRoute<IRoute<'Settings'>>();
 
-  const changed =
-    (name !== null && acc.name !== name) ||
-    (shortName !== null && acc.shortName !== shortName) ||
-    (bio !== null && acc.bio !== bio);
-
-  return renderIf(changed, () => (
-    //TODO: fix exiting
-    <SmoothView exiting={undefined}>
-      <TextButton
-        onPress={() => {
-          navigation.setParams({save: save + 1});
-        }}>
-        Save
-      </TextButton>
-    </SmoothView>
-  ));
+  return (
+    <TextButton
+      style={styles.btn}
+      disabled={!valid || !changed}
+      onPress={() => {
+        navigation.setParams({save: save + 1});
+      }}>
+      Save
+    </TextButton>
+  );
 };
 
-export default observer(SettingsRight);
+const styles = ScaledSheet.create({
+  btn: {
+    marginRight: '8@s',
+  },
+});
+
+export default SettingsRight;

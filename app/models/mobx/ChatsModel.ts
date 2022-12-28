@@ -1,5 +1,5 @@
 import FirestoreModel from '../abstract/FirestoreModel';
-import {makeObservable, override, when} from 'mobx';
+import {action, computed, makeObservable, override, when} from 'mobx';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
@@ -108,6 +108,9 @@ class ChatsModel extends FirestoreModel<IChat> {
       .catch(error =>
         console.log('https://fcm.googleapis.com/fcm/send error', error),
       );
+  }
+  @computed get unread() {
+    return;
   }
   async sendMessage(
     chatId: string,

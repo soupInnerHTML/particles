@@ -5,9 +5,8 @@ type RootStackParamList = {
   Main: NestedStack<MainStackParamList>;
   Account: NestedStack<AccountStackParamList>;
   Settings: {
-    name: string | null;
-    shortName: string | null;
-    bio: string | null;
+    changed: boolean;
+    valid: boolean;
     save: number;
   };
 };

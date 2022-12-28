@@ -45,9 +45,8 @@ const RootNavigationContainer: React.FC = () => {
           component={withAuthObserver(AccountSettingsScreen)}
           initialParams={{
             save: 0,
-            name: null,
-            bio: null,
-            shortName: null,
+            valid: true,
+            changed: false,
           }}
           options={{
             contentStyle: themed.stack,

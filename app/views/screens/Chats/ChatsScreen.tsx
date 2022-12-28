@@ -31,11 +31,11 @@ const ChatsScreen: React.FC = () => {
   const navigation = useAppNavigation();
 
   useEffect(() => {
-    // const unsubscribe = BackendMessagesService.setMessageHandler(
-    // DisplayMessagesService.onMessageReceived,
-    // id => navigation.navigate('Chat', {id, userId: AccountModel.id || ''}),
-    // );
-    // return unsubscribe;
+    const unsubscribe = BackendMessagesService.setMessageHandler(
+      DisplayMessagesService.onMessageReceived,
+      id => navigation.navigate('Chat', {id, userId: AccountModel.id || ''}),
+    );
+    return unsubscribe;
   }, []);
 
   const chats = SearchChatsModel.searchQuery

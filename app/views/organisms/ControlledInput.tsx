@@ -6,7 +6,6 @@ import normalizeText from '../../utils/normalizeText';
 import {ScaledSheet} from 'react-native-size-matters';
 import {View} from 'react-native';
 import SmoothView from '../atoms/SmoothView';
-import Row from '../atoms/Row';
 import renderIf from '../../utils/renderIf';
 
 type IControlledInputProps = InputProps &
@@ -43,8 +42,9 @@ const ControlledInput: FC<IControlledInputProps> = ({
     <Controller
       control={control}
       render={({field: {onChange, onBlur, value}, fieldState: {error}}) => (
-        <View style={{position: 'relative'}}>
+        <View style={styles.container}>
           <Input
+            style={styles.input}
             {...props}
             accessoryRight={Icons}
             secureTextEntry={tempSecureTextEntry}
@@ -53,19 +53,17 @@ const ControlledInput: FC<IControlledInputProps> = ({
             {...{onBlur, value}}
           />
           {renderIf(error?.message, () => (
-            <SmoothView>
-              <Row style={styles.text}>
-                <Icon
-                  name={'alert-circle-outline'}
-                  width={16}
-                  height={16}
-                  fill={theme['text-danger-color']}
-                  backgroundColor={'#fff'}
-                />
-                <Text category={'p2'} status={'danger'}>
-                  {' ' + normalizeText(error?.message!)}
-                </Text>
-              </Row>
+            <SmoothView style={styles.text}>
+              <Icon
+                name={'alert-circle-outline'}
+                width={16}
+                height={16}
+                fill={theme['text-danger-color']}
+                backgroundColor={'#fff'}
+              />
+              <Text category={'p2'} status={'danger'}>
+                {' ' + normalizeText(error?.message!)}
+              </Text>
             </SmoothView>
           ))}
         </View>
@@ -76,9 +74,16 @@ const ControlledInput: FC<IControlledInputProps> = ({
 };
 
 const styles = ScaledSheet.create({
+  container: {
+    position: 'relative',
+  },
   text: {
     position: 'absolute',
-    bottom: '-14@vs',
+    bottom: -16,
+    flexDirection: 'row',
+  },
+  input: {
+    marginTop: '20@vs',
   },
 });
 

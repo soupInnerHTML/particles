@@ -6,6 +6,7 @@ import firestore, {
 } from '@react-native-firebase/firestore';
 import {noop} from 'lodash';
 import {showError} from '@utils/messages';
+import {Platform} from 'react-native';
 
 export interface IUserModelServer {
   name: string;
@@ -21,6 +22,7 @@ export interface IUserModelServer {
 
 export type IUserModelWithoutId = Omit<IUserModelServer, 'color'> & {
   avatarPlaceholder: string;
+  notificationsEnabled: boolean;
 };
 
 enum Theme {
@@ -36,6 +38,7 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
   @observable public avatar?: string;
   @observable public name?: string;
   @observable public theme = Theme.dark;
+  @observable public notificationsEnabled = Platform.OS === 'android';
   @observable public lastSeen?: FirebaseFirestoreTypes.Timestamp;
   @observable private _color?: string;
   @observable public fcmToken?: string;
@@ -65,12 +68,15 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
       theme: this.theme,
     });
   }
+  @action.bound setNotificationsEnabled(notificationsEnabled: boolean) {
+    this.notificationsEnabled = notificationsEnabled;
+  }
 
   @action.bound updateFcmToken(fcmToken: string) {
     return this.updateData({fcmToken});
   }
 
-  @action.bound updateData(data: IMaybe<IUserModelServer>) {
+  @action.bound updateData(data: Partial<IUserModelServer>) {
     return this.ref?.update(data);
   }
 

@@ -12,29 +12,40 @@ export default function (chatId: string): Maybe<IMessage[]> {
         .collection('messageHistory')
         .orderBy('time', 'asc')
         .onSnapshot(snapshot => {
-          snapshot.docChanges().forEach(item => {
-            if (item.doc.exists) {
-              switch (item.type) {
-                case 'added':
-                  return setMessageHistory(actual => {
-                    return [
-                      <IMessage>{...item.doc.data(), id: item.doc.id},
-                      ...actual,
-                    ];
-                  });
-                case 'removed':
-                  return setMessageHistory(actual =>
-                    actual.filter(m => m.id !== item.doc.id),
-                  );
-                case 'modified':
-                  return setMessageHistory(actual =>
-                    actual.map(m =>
-                      m.id === item.doc.id ? <IMessage>item.doc.data() : m,
-                    ),
-                  );
-              }
+          if (snapshot) {
+            if (messageHistory.length) {
+              snapshot.docChanges().forEach(item => {
+                if (item.doc.exists) {
+                  switch (item.type) {
+                    case 'added':
+                      return setMessageHistory(actual => {
+                        return [
+                          <IMessage>{...item.doc.data(), id: item.doc.id},
+                          ...actual,
+                        ];
+                      });
+                    case 'removed':
+                      return setMessageHistory(actual =>
+                        actual.filter(m => m.id !== item.doc.id),
+                      );
+                    case 'modified':
+                      return setMessageHistory(actual =>
+                        actual.map(m =>
+                          m.id === item.doc.id ? <IMessage>item.doc.data() : m,
+                        ),
+                      );
+                  }
+                }
+              });
+            } else {
+              const items: IMessage[] = [];
+              snapshot.forEach(item => {
+                item.exists && items.unshift(item.data());
+              });
+
+              setMessageHistory(items);
             }
-          });
+          }
         });
     }
   }, [chatId]);
