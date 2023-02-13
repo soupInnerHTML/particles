@@ -1,8 +1,8 @@
-import {action, computed, observable, reaction} from 'mobx';
+import {action, computed, observable} from 'mobx';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
-import ModelWithStatus from './ModelWithStatus';
+import StatusModel from './StatusModel';
 import {persist} from 'mobx-persist';
 
 interface IOrderBy<T> {
@@ -10,7 +10,7 @@ interface IOrderBy<T> {
   directionStr?: 'asc' | 'desc';
 }
 
-abstract class FirestoreModel<LocalModel extends {}> extends ModelWithStatus {
+abstract class FirestoreModel<LocalModel extends {}> extends StatusModel {
   @persist('list') @observable.deep data: LocalModel[] = [];
 
   protected _name = this.constructor.name.replace('Model', '').toLowerCase();
@@ -55,27 +55,14 @@ abstract class FirestoreModel<LocalModel extends {}> extends ModelWithStatus {
   }
 
   @action getData = async () => {
-    this.setStatus('PENDING');
+    this.setPendingStatus();
     const data = await this._filteredInstance.get();
     this._onSnapshot(data);
-    this.setStatus('DONE');
+    this.setDoneStatus();
   };
 
   protected constructor() {
     super();
-    // this._filteredInstance.onSnapshot(this._onSnapshot, this._onError);
-
-    // reaction(
-    //   () => this.data.length,
-    //   isExist => {
-    //     if (isExist) {
-    //       this.setStatus('DONE');
-    //     } else {
-    //       this.setStatus('PENDING');
-    //     }
-    //   },
-    //   {name: 'data'},
-    // );
   }
 }
 

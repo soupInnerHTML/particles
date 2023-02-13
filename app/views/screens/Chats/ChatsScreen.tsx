@@ -6,7 +6,7 @@ import Chat from '@organisms/Chat';
 import useOnlineDaemon from '../../../hooks/useOnlineDaemon';
 import AccountModel from '../../../models/mobx/AccountModel';
 import {Layout} from '@ui-kitten/components';
-import DisplayMessagesService from '../../../messaging/DisplayMessagesService';
+import DisplayMessagesService from '../../../services/messaging/DisplayMessagesService';
 import useAppNavigation from '@hooks/useAppNavigation';
 import Animated, {
   Layout as ReanimatedLayout,
@@ -14,7 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import EmptyChats from '@atoms/EmptyChats';
 import SearchChatsModel from '@models/mobx/SearchChatsModel';
-import BackendMessagesService from '../../../messaging/BackendMessagesService';
+import BackendMessagesService from '../../../services/messaging/BackendMessagesService';
 
 // BackendMessagesService.setBackgroundMessageHandler(
 //   DisplayMessagesService.onMessageReceived,

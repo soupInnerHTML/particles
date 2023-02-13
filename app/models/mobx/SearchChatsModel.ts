@@ -1,5 +1,11 @@
-import ModelWithStatus from '@models/abstract/ModelWithStatus';
-import {action, makeObservable, observable, reaction} from 'mobx';
+import StatusModel from '@models/abstract/StatusModel';
+import {
+  action,
+  IReactionDisposer,
+  makeObservable,
+  observable,
+  reaction,
+} from 'mobx';
 import {debounce} from 'lodash';
 import {IChat} from '@models/mobx/ChatsModel';
 import firestore, {
@@ -8,7 +14,7 @@ import firestore, {
 import AccountModel, {IUserModel} from '@models/mobx/AccountModel';
 import getIdAlphabetically from '@utils/getIdAlphabetically';
 
-class SearchChatsModel extends ModelWithStatus {
+class SearchChatsModel extends StatusModel {
   @observable data: IChat[] = [];
   @observable searchQuery: string = '';
 
@@ -24,6 +30,7 @@ class SearchChatsModel extends ModelWithStatus {
     );
   }
   @action.bound async searchChats() {
+    console.log('search');
     // this.setStatus('PENDING');
     const prepare: IChat[] = [];
     const promises: Promise<IChat | void>[] = [];
@@ -74,19 +81,23 @@ class SearchChatsModel extends ModelWithStatus {
     };
   }
 
+  private _DEBOUNCE_SEARCH_CHATS_TIMING = 250;
+
+  private _searchReaction(): IReactionDisposer {
+    return reaction(
+      () => this.searchQuery,
+      () => {
+        this.setPendingStatus();
+        this.data = [];
+        debounce(this.searchChats, this._DEBOUNCE_SEARCH_CHATS_TIMING)();
+      },
+    );
+  }
+
   constructor() {
     super();
     makeObservable(this);
-
-    reaction(() => this.searchQuery, debounce(this.searchChats, 250));
-
-    reaction(
-      () => this.searchQuery,
-      () => {
-        this.setStatus('PENDING');
-        this.data = [];
-      },
-    );
+    this._searchReaction();
   }
 }
 

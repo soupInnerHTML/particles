@@ -1,6 +1,6 @@
 import {action, computed, makeObservable, observable} from 'mobx';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import ModelWithStatus from '../abstract/ModelWithStatus';
+import StatusModel from '../abstract/StatusModel';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {showFirebaseError, showSuccess} from '@utils/messages';
 import AccountModel, {IUserModelServer} from './AccountModel';
@@ -23,7 +23,7 @@ enum ESignInMethods {
   GOOGLE,
 }
 
-class AuthModel extends ModelWithStatus {
+class AuthModel extends StatusModel {
   @observable public signMethod = ESignInMethods.NONE;
 
   @computed public get isGoogleSignIn() {

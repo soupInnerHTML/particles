@@ -1,5 +1,12 @@
-import {action, computed, makeObservable, observable, reaction} from 'mobx';
-import ModelWithStatus from '../abstract/ModelWithStatus';
+import {
+  action,
+  computed,
+  IReactionDisposer,
+  makeObservable,
+  observable,
+  reaction,
+} from 'mobx';
+import StatusModel from '../abstract/StatusModel';
 import generateAvatarPlaceholder from '../../utils/generateAvatarPlaceholder';
 import firestore, {
   FirebaseFirestoreTypes,
@@ -23,16 +30,23 @@ export interface IUserModelServer {
 export type IUserModelWithoutId = Omit<IUserModelServer, 'color'> & {
   avatarPlaceholder: string;
   notificationsEnabled: boolean;
+  ref: AccountRef;
 };
 
-enum Theme {
+type AccountRef = Maybe<
+  FirebaseFirestoreTypes.DocumentReference<IUserModelServer>
+>;
+
+export enum Theme {
   'dark' = 'dark',
   'light' = 'light',
 }
 
 export type IUserModel = IWithId<IUserModelWithoutId>;
 
-class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
+interface IAccountModel extends IMaybe<IUserModel> {}
+
+class AccountModel extends StatusModel implements IAccountModel {
   @observable public id?: string;
   @observable public email?: string;
   @observable public avatar?: string;
@@ -44,10 +58,6 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
   @observable public fcmToken?: string;
   @observable public shortName?: string;
   @observable public bio?: string;
-
-  get instance() {
-    return;
-  }
 
   @computed public get avatarPlaceholder() {
     return generateAvatarPlaceholder(this.name, 'ff0000');
@@ -98,11 +108,8 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
     };
   }
 
-  constructor() {
-    super();
-    makeObservable(this);
-
-    reaction(
+  private _changeUserReaction(): IReactionDisposer {
+    return reaction(
       () => this.ref,
       (ref, prev) => {
         if (ref?.id !== prev?.id) {
@@ -110,7 +117,6 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
           if (ref) {
             this._unsubRef = ref.onSnapshot(snapshot => {
               const user = snapshot.data();
-
               if (user) {
                 this.name = user.name;
                 this.avatar = user.avatar;
@@ -125,6 +131,12 @@ class AccountModel extends ModelWithStatus implements IMaybe<IUserModel> {
         }
       },
     );
+  }
+
+  constructor() {
+    super();
+    makeObservable(this);
+    this._changeUserReaction();
   }
 }
 

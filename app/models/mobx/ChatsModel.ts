@@ -1,5 +1,5 @@
 import FirestoreModel from '../abstract/FirestoreModel';
-import {action, computed, makeObservable, override, when} from 'mobx';
+import {computed, makeObservable, override, when} from 'mobx';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
@@ -10,7 +10,7 @@ import {Asset} from 'react-native-image-picker';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {showError, showSuccess} from '@utils/messages';
 import {Alert} from 'react-native';
-import {EStatus} from '@models/abstract/ModelWithStatus';
+import {EStatus} from '@models/abstract/StatusModel';
 
 export interface IChat {
   members: FirebaseFirestoreTypes.DocumentReference<IUserModel>[];

@@ -7,7 +7,7 @@ export enum EStatus {
   ERROR = 'ERROR',
 }
 
-abstract class ModelWithStatus {
+abstract class StatusModel {
   @observable status: EStatus = EStatus.NONE;
 
   @computed get isNone() {
@@ -23,9 +23,22 @@ abstract class ModelWithStatus {
     return this.status === EStatus.ERROR;
   }
 
+  // legacy
   @action setStatus(status: keyof typeof EStatus) {
     this.status = EStatus[status];
   }
+  @action setPendingStatus() {
+    this.status = EStatus.PENDING;
+  }
+  @action setErrorStatus() {
+    this.status = EStatus.ERROR;
+  }
+  @action setDoneStatus() {
+    this.status = EStatus.DONE;
+  }
+  @action setNoneStatus() {
+    this.status = EStatus.NONE;
+  }
 }
 
-export default ModelWithStatus;
+export default StatusModel;
