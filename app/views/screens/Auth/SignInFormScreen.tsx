@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {observer} from 'mobx-react-lite';
 import AuthForm from '../../templates/AuthForm';
-import {StackItem} from '../../../navigation/navigation';
+import {StackItem} from '../../../navigation/navigation.types';
 import * as yup from 'yup';
 import AuthModel from '../../../models/mobx/AuthModel';
 

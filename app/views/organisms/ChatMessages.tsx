@@ -8,7 +8,7 @@ import ChipsText from '@atoms/ChipsText';
 import Message from '@molecules/Message';
 import {ScaledSheet} from 'react-native-size-matters';
 import {useRoute} from '@react-navigation/native';
-import {IRoute} from '../../navigation/navigation';
+import {IRoute} from '../../navigation/navigation.types';
 import calendar from 'dayjs/plugin/calendar';
 import {observer} from 'mobx-react-lite';
 import useFirestoreMessageHistory from '@hooks/useFirestoreMessageHistory';

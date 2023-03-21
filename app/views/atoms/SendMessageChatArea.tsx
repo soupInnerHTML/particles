@@ -6,7 +6,9 @@ import ChatsModel from '@models/mobx/ChatsModel';
 import {ScaledSheet} from 'react-native-size-matters';
 import {Asset} from 'react-native-image-picker';
 import {useRoute} from '@react-navigation/native';
-import {IRoute} from '../../navigation/navigation';
+import {IRoute} from '../../navigation/navigation.types';
+import {observer} from 'mobx-react-lite';
+import {useTyping} from '@hooks/useTyping';
 
 interface ISendMessageChatAreaProps {
   textMessage?: string;
@@ -26,6 +28,9 @@ const SendMessageChatArea: React.FC<ISendMessageChatAreaProps> = ({
   const {
     params: {id: chatId, userId},
   } = useRoute<IRoute<'Chat'>>();
+
+  useTyping(textMessage);
+
   return (
     <View style={styles.messageSend}>
       <Input
@@ -75,4 +80,4 @@ const styles = ScaledSheet.create({
   },
 });
 
-export default SendMessageChatArea;
+export default observer(SendMessageChatArea);

@@ -14,7 +14,7 @@ export default function (chatId: string): Maybe<IMessage[]> {
         .onSnapshot(snapshot => {
           if (snapshot) {
             if (messageHistory.length) {
-              snapshot.docChanges().forEach(item => {
+              snapshot.docChanges().forEach(async item => {
                 if (item.doc.exists) {
                   switch (item.type) {
                     case 'added':

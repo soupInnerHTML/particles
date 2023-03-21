@@ -3,23 +3,22 @@ import ChatsModel, {IChat, IMessage} from '@models/mobx/ChatsModel';
 import {observer} from 'mobx-react-lite';
 import AccountModel, {IUserModel} from '@models/mobx/AccountModel';
 import {useNavigation} from '@react-navigation/native';
-import {INavigation} from '../../navigation/navigation';
+import {INavigation} from '../../navigation/navigation.types';
 import {Layout} from '@ui-kitten/components';
-import {Alert, Animated, LogBox, TouchableHighlight} from 'react-native';
+import {Alert, Animated, TouchableHighlight} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
 import useFirestoreUser from '@hooks/useFirestoreUser';
 import SmoothView from '@atoms/SmoothView';
 import useFirestoreMessageHistory from '@hooks/useFirestoreMessageHistory';
 import {Swipeable} from 'react-native-gesture-handler';
 import ChatSwipeAction from '@atoms/ChatSwipeAction';
-import ChatBody from '@molecules/ChatBody';
+import ChatBody from '@organisms/ChatBody';
 import ChatAvatar from '@molecules/ChatAvatar';
 import ChatMeta from '@molecules/ChatMeta';
 import showContextActions from '@utils/showContextActions';
 import {noop} from 'lodash';
 import vibrate from '@utils/vibrate';
-
-// LogBox.ignoreAllLogs();
+import useCustomInAppMessaging from '@hooks/useCustomInAppMessaging';
 
 const renderRightActions = (
   progress: Animated.AnimatedInterpolation,
@@ -75,6 +74,8 @@ const Chat: React.FC<IChat> = ({members, id}) => {
   const companionRef =
     members.find(member => member.id !== AccountModel.id) ?? AccountModel.ref!;
   const companion = useFirestoreUser(companionRef.id);
+
+  useCustomInAppMessaging(id);
 
   const messageHistory = useFirestoreMessageHistory(id);
   const lastMessage = messageHistory?.[0];

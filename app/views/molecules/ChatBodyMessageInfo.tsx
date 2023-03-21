@@ -1,15 +1,15 @@
 import React from 'react';
-import {View} from 'react-native';
-import {Text} from '@ui-kitten/components';
-import Row from '@atoms/Row';
-import ChipsText from '@atoms/ChipsText';
-import {ScaledSheet} from 'react-native-size-matters';
 import {IChatComponentsProps} from '@organisms/Chat';
+import {withSmooth} from '@hoc/withSmooth';
+import Row from '@atoms/Row';
+import {View} from 'react-native';
+import ChipsText from '@atoms/ChipsText';
+import {Text} from '@ui-kitten/components';
+import {ScaledSheet} from 'react-native-size-matters';
 
-const ChatBody: React.FC<IChatComponentsProps> = ({companion, lastMessage}) => {
-  return (
-    <View style={styles.chatBody}>
-      <Text>{companion?.name}</Text>
+export const ChatBodyMessageInfo: React.FC<IChatComponentsProps> = withSmooth(
+  ({lastMessage, companion}) => {
+    return (
       <Row alignItems={'baseline'}>
         {!!lastMessage?.photos && (
           <View style={styles.mediaChips}>
@@ -36,15 +36,11 @@ const ChatBody: React.FC<IChatComponentsProps> = ({companion, lastMessage}) => {
           {lastMessage?.text ?? '@' + companion?.shortName}
         </Text>
       </Row>
-    </View>
-  );
-};
+    );
+  },
+);
 
 const styles = ScaledSheet.create({
-  chatBody: {
-    marginLeft: '8@s',
-    width: '75%',
-  },
   mediaChips: {
     marginRight: '4@s',
     marginTop: '4@vs',
@@ -55,5 +51,3 @@ const styles = ScaledSheet.create({
     marginTop: '4@vs',
   },
 });
-
-export default ChatBody;

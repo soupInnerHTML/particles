@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {INavigation, IRoute} from './navigation';
+import {INavigation, IRoute} from './navigation.types';
 import TextButton from '@atoms/TextButton';
 import {ScaledSheet} from 'react-native-size-matters';
 

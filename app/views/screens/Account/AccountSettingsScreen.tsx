@@ -10,9 +10,11 @@ import {FormProvider, useForm} from 'react-hook-form';
 import ControlledInput from '@organisms/ControlledInput';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {StackItem} from '../../../navigation/navigation';
-import {Platform, View} from 'react-native';
+import {StackItem} from '../../../navigation/navigation.types';
+import {Platform, TouchableOpacity, View} from 'react-native';
 import {ScaledSheet} from 'react-native-size-matters';
+import PressableAccountAvatar from '@atoms/PressableAccountAvatar';
+import {useAvatarChange} from '@hooks/useAvatarChange';
 
 const createObject = (arr: any[], key1: string, key2: string) => {
   return Object.fromEntries(arr.map(item => [item[key1], item[key2]]));
@@ -46,7 +48,7 @@ const AccountSettingsScreen: React.FC<StackItem<'Settings'>> = ({
       },
       {
         name: 'bio',
-        placeholder: 'BIO, example: 20 y.o. kavkaz developer',
+        placeholder: 'BIO, example: 20 y.o. udmurt developer',
         value: AccountModel.bio,
         icon: 'hash',
         rule: yup.string().max(60),
@@ -91,11 +93,25 @@ const AccountSettingsScreen: React.FC<StackItem<'Settings'>> = ({
       });
   }, [route.params?.save]);
 
+  const {avatar, changeAvatar} = useAvatarChange();
+
   return (
     <Layout style={commonStyles.full}>
       <Text style={[commonStyles.mt16, styles.accTitle]} category={'h6'}>
         Account details
       </Text>
+      <View style={styles.avatarWrapper}>
+        <PressableAccountAvatar
+          style={styles.avatar}
+          onPress={changeAvatar}
+          image={
+            avatar?.uri ?? AccountModel.avatar ?? AccountModel.avatarPlaceholder
+          }
+        />
+        <TouchableOpacity onPress={changeAvatar} style={styles.editWrapper}>
+          <Icon style={styles.edit} fill="#000" name="edit" />
+        </TouchableOpacity>
+      </View>
       <FormProvider {...form}>
         {schema.map(input => (
           <ControlledInput
@@ -139,7 +155,32 @@ const AccountSettingsScreen: React.FC<StackItem<'Settings'>> = ({
 
 const styles = ScaledSheet.create({
   accTitle: {
-    marginBottom: '-8@vs',
+    // marginBottom: '-8@vs',
+  },
+  avatarWrapper: {
+    position: 'relative',
+  },
+  avatar: {
+    width: '96@s',
+    height: '96@s',
+    alignSelf: 'center',
+  },
+  edit: {
+    width: '16@s',
+    height: '16@s',
+  },
+  editWrapper: {
+    width: '20@s',
+    height: '20@s',
+    position: 'absolute',
+    borderRadius: '20@s',
+    padding: '2@s',
+    bottom: '8@vs',
+    left: '60%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#000',
+    right: '8@s',
   },
 });
 

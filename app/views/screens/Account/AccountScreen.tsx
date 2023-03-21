@@ -1,6 +1,6 @@
 import React from 'react';
 import {observer} from 'mobx-react-lite';
-import {StackItem} from '../../../navigation/navigation';
+import {StackItem} from '../../../navigation/navigation.types';
 import {Layout, Text} from '@ui-kitten/components';
 import useFirestoreUser from '@hooks/useFirestoreUser';
 import PressableAccountAvatar from '@atoms/PressableAccountAvatar';
@@ -10,13 +10,19 @@ import commonStyles from '../../styles/commonStyles';
 import getLastSeen from '@utils/getLastSeen';
 import useIsOnline from '@hooks/useIsOnline';
 import OnlineStatus from '@atoms/OnlineStatus';
+import {withSmooth} from '@hoc/withSmooth';
+import {useAvatarChange} from '@hooks/useAvatarChange';
+import AccountModel from '@models/mobx/AccountModel';
+import {noop} from 'lodash';
+
+const SmoothText = withSmooth(Text);
 
 const AccountScreen: React.FC<StackItem<'Profile'>> = ({route}) => {
   const {id} = route.params;
   const user = useFirestoreUser(id);
   const {seconds} = user?.lastSeen || {};
-  const isOnline = useIsOnline(seconds ?? 0);
-  console.log(user);
+  const isOnline = useIsOnline(id);
+  const {changeAvatar} = useAvatarChange();
   return (
     <Layout style={{flex: 1}}>
       <View style={styles.headerContainer}>
@@ -24,6 +30,7 @@ const AccountScreen: React.FC<StackItem<'Profile'>> = ({route}) => {
           style={[styles.avatar, commonStyles.mv8]}
           id={id}
           image={(user?.avatar || user?.avatarPlaceholder) ?? ''}
+          onPress={id === AccountModel.id ? changeAvatar : noop}
         />
         <View style={styles.online}>
           <OnlineStatus online={isOnline} />
@@ -35,7 +42,9 @@ const AccountScreen: React.FC<StackItem<'Profile'>> = ({route}) => {
         )}
 
         {!isOnline && (
-          <Text style={[commonStyles.mt16]}>{getLastSeen(seconds ?? 0)}</Text>
+          <SmoothText style={[commonStyles.mt16]}>
+            {getLastSeen(seconds ?? 0)}
+          </SmoothText>
         )}
       </View>
     </Layout>

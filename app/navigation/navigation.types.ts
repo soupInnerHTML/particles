@@ -1,6 +1,6 @@
 import {NativeStackScreenProps} from 'react-native-screens/native-stack';
 
-type RootStackParamList = {
+export type RootStackParamList = {
   Login: NestedStack<LoginStackParamList>;
   Main: NestedStack<MainStackParamList>;
   Account: NestedStack<AccountStackParamList>;
@@ -13,11 +13,13 @@ type RootStackParamList = {
 
 type NestedStack<Stack> = {screen: keyof Stack; params?: Stack[keyof Stack]};
 
-type LoginStackParamList = {
-  SignIn: undefined;
-  SignUp: undefined;
-  ResetPassword: undefined;
+export const LoginStackParamListDto = {
+  SignIn: undefined,
+  SignUp: undefined,
+  ResetPassword: undefined,
 };
+
+export type LoginStackParamList = typeof LoginStackParamListDto;
 
 type MainStackParamList = {
   Chats: undefined;
@@ -29,7 +31,7 @@ type AccountStackParamList = {
   AccountSettings: undefined;
 };
 
-type TabParamList = {};
+export type TabParamList = {};
 
 type Routes = RootStackParamList &
   LoginStackParamList &
@@ -37,7 +39,10 @@ type Routes = RootStackParamList &
   AccountStackParamList;
 
 type ERouteNames = keyof Routes;
-type StackItem<T extends ERouteNames> = NativeStackScreenProps<Routes, T>;
-type INavigation<T extends keyof RootStackParamList = any> =
+export type StackItem<T extends ERouteNames> = NativeStackScreenProps<
+  Routes,
+  T
+>;
+export type INavigation<T extends keyof RootStackParamList = any> =
   StackItem<T>['navigation'];
-type IRoute<T extends ERouteNames = any> = StackItem<T>['route'];
+export type IRoute<T extends ERouteNames = any> = StackItem<T>['route'];

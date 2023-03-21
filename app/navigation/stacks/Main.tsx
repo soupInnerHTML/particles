@@ -3,7 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ChatsScreen from '../../views/screens/Chats/ChatsScreen';
 import Chat from '../../views/screens/Chat/ChatScreen';
 import ChatHeader from '../header/ChatHeader';
-import {MainStackParamList} from '../navigation';
+import {MainStackParamList} from '../navigation.types';
 import {StyleProp, ViewStyle} from 'react-native';
 import useAppNavigation from '@hooks/useAppNavigation';
 import ChatsHeader from '../header/ChatsHeader';

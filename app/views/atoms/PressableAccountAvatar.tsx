@@ -1,7 +1,8 @@
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, TouchableOpacityProps} from 'react-native';
 import {Avatar, AvatarProps} from '@ui-kitten/components';
 import React from 'react';
 import useAppNavigation from '../../hooks/useAppNavigation';
+import {withSmooth} from '@hoc/withSmooth';
 
 interface IPressableAccountAvatarImageProps {
   image: string;
@@ -9,13 +10,18 @@ interface IPressableAccountAvatarImageProps {
 }
 
 const PressableAccountAvatar: React.FC<
-  IPressableAccountAvatarImageProps & Omit<AvatarProps, 'source'>
-> = ({image, id, ...props}) => {
+  IPressableAccountAvatarImageProps &
+    Omit<AvatarProps, 'source'> &
+    TouchableOpacityProps
+> = ({image, id, onPress, ...props}) => {
   const navigation = useAppNavigation();
   return (
     <TouchableOpacity
-      onPress={() =>
-        navigation.navigate('Account', {screen: 'Profile', params: {id}})
+      {...props}
+      onPress={event =>
+        onPress
+          ? onPress(event)
+          : navigation.navigate('Account', {screen: 'Profile', params: {id}})
       }>
       <Avatar
         source={{
@@ -27,4 +33,4 @@ const PressableAccountAvatar: React.FC<
   );
 };
 
-export default PressableAccountAvatar;
+export default withSmooth(PressableAccountAvatar);

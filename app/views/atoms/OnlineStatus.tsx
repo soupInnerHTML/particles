@@ -7,14 +7,12 @@ import SmoothView from './SmoothView';
 const OnlineStatus: React.FC<{online: boolean}> = ({online}) => {
   const theme = useTheme();
   return online ? (
-    <SmoothView>
+    <SmoothView style={styles.wrapper}>
       <View
         style={[styles.dot, {backgroundColor: theme['color-primary-400']}]}
       />
     </SmoothView>
-  ) : (
-    <></>
-  );
+  ) : null;
 };
 
 const styles = ScaledSheet.create({
@@ -26,6 +24,9 @@ const styles = ScaledSheet.create({
     position: 'absolute',
     bottom: '2@s',
     right: '4@s',
+  },
+  wrapper: {
+    zIndex: 999,
   },
 });
 

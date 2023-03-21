@@ -4,11 +4,13 @@ import normalizeText from '../../utils/normalizeText';
 import {
   Divider,
   Icon,
+  TextProps,
   TopNavigation,
   TopNavigationAction,
 } from '@ui-kitten/components';
 import useAppNavigation from '../../hooks/useAppNavigation';
 import {ScaledSheet} from 'react-native-size-matters';
+import {RenderProp} from '@ui-kitten/components/devsupport';
 
 const BackAction = () => {
   const navigation = useAppNavigation();
@@ -22,9 +24,9 @@ const BackAction = () => {
 
 export interface IHeaderProps {
   title: string;
-  subtitle?: string;
+  subtitle?: React.ReactText | RenderProp<TextProps>;
   canGoBack?: any;
-  right?: any;
+  right?: RenderProp<{}>;
   Wrapper?: FC<any>;
 }
 

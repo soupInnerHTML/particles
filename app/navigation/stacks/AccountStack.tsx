@@ -6,7 +6,7 @@ import commonStackStyles from '../style/commonStackStyles';
 import {Icon, TopNavigationAction} from '@ui-kitten/components';
 import useAppNavigation from '../../hooks/useAppNavigation';
 import {useRoute} from '@react-navigation/native';
-import {IRoute} from '../navigation';
+import {IRoute} from '../navigation.types';
 import AccountModel from '@models/mobx/AccountModel';
 
 const Stack = createNativeStackNavigator();

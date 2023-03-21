@@ -1,36 +1,22 @@
-import dayjs from 'dayjs';
-import {ONLINE_TIMING} from './useOnlineDaemon';
 import {useEffect, useState} from 'react';
+import {onlineSocket} from '../services/sockets/onlineSocket';
+// import {Alert} from 'react-native';
 
-const AWAITING = ONLINE_TIMING * 2;
+export default function (id: string | undefined) {
+  const [isOnline, setIsOnline] = useState(false);
 
-function getDiff(lastSeen: number) {
-  return dayjs().unix() - lastSeen;
-}
-
-function getIsOnline(lastSeen: number) {
-  return getDiff(lastSeen) <= AWAITING;
-}
-
-export default function (lastSeen: number) {
-  const [isOnline, setIsOnline] = useState(getIsOnline(lastSeen));
   useEffect(() => {
-    const checkOnlineStatus = () => {
-      // console.log(`${getDiff(lastSeen)} of ${AWAITING} seconds till offline`);
-      if (getIsOnline(lastSeen)) {
-        setIsOnline(true);
-      } else {
-        setIsOnline(false);
-        clearInterval(intervalId);
-        // console.log('offline');
-      }
-    };
+    if (id) {
+      const cleanup = onlineSocket.onlineListener(id, e => {
+        // Alert.alert(JSON.stringify(e));
+        if (e.id === id) {
+          setIsOnline(e.online);
+        }
+      });
 
-    checkOnlineStatus();
-    const intervalId = setInterval(checkOnlineStatus, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [lastSeen]);
+      return () => cleanup();
+    }
+  }, [id]);
 
   return isOnline;
 }

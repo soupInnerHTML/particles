@@ -1,8 +1,5 @@
 import React, {useMemo} from 'react';
-import ChatsModel, {
-  IMessage,
-  MessageStatus,
-} from '../../models/mobx/ChatsModel';
+import ChatsModel, {IMessage, MessageStatus} from '@models/mobx/ChatsModel';
 import {Text, useTheme} from '@ui-kitten/components';
 import AccountModel from '../../models/mobx/AccountModel';
 import {TouchableOpacity, View} from 'react-native';
@@ -14,7 +11,7 @@ import Animated, {SlideInLeft, SlideInRight} from 'react-native-reanimated';
 import ImageModal from 'react-native-image-modal';
 import VisibilitySensor from '@svanboxel/visibility-sensor-react-native';
 import {useRoute} from '@react-navigation/native';
-import {IRoute} from '../../navigation/navigation';
+import {IRoute} from '../../navigation/navigation.types';
 import showContextActions from '@utils/showContextActions';
 
 function openContextActions(

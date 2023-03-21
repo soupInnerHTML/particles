@@ -36,7 +36,6 @@ const App: React.FC = () => {
         flex: 1,
         backgroundColor: bgColor,
       }}>
-      <FlashMessageRegistry position="top" />
       <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -54,6 +53,7 @@ const App: React.FC = () => {
           </Layout>
         </ApplicationProvider>
       </KeyboardAvoidingView>
+      <FlashMessageRegistry position="top" />
     </SafeAreaView>
   );
 };

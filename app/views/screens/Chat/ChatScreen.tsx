@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Layout as LayoutView} from '@ui-kitten/components';
-import {StackItem} from '../../../navigation/navigation';
+import {StackItem} from '../../../navigation/navigation.types';
 import {observer} from 'mobx-react-lite';
 import {Asset, launchImageLibrary} from 'react-native-image-picker';
 import ChatAttachment from '@molecules/ChatAttachment';

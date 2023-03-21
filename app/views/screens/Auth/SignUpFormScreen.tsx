@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import AuthForm from '../../templates/AuthForm';
 import {View} from 'react-native';
-import {StackItem} from '../../../navigation/navigation';
+import {StackItem} from '../../../navigation/navigation.types';
 import * as yup from 'yup';
 import {ref} from 'yup/es';
 import {defaultSchema} from './SignInFormScreen';

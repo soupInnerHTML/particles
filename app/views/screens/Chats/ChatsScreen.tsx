@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react';
 import {Keyboard, ListRenderItem} from 'react-native';
-import ChatsModel, {IChat} from '../../../models/mobx/ChatsModel';
+import ChatsModel, {IChat} from '@models/mobx/ChatsModel';
 import {observer} from 'mobx-react-lite';
 import Chat from '@organisms/Chat';
-import useOnlineDaemon from '../../../hooks/useOnlineDaemon';
+import useOnlineLogin from '@hooks/useOnlineLogin';
 import AccountModel from '../../../models/mobx/AccountModel';
 import {Layout} from '@ui-kitten/components';
-import DisplayMessagesService from '../../../services/messaging/DisplayMessagesService';
-import useAppNavigation from '@hooks/useAppNavigation';
+// import DisplayMessagesService from '../../../services/messaging/DisplayMessagesService';
+// import useAppNavigation from '@hooks/useAppNavigation';
 import Animated, {
   Layout as ReanimatedLayout,
   SlideOutUp,
@@ -27,15 +27,16 @@ const renderChats: ListRenderItem<IChat> = ({item}) => (
 );
 
 const ChatsScreen: React.FC = () => {
-  useOnlineDaemon(AccountModel.id);
-  const navigation = useAppNavigation();
+  useOnlineLogin(AccountModel.id);
+  // const navigation = useAppNavigation();
 
   useEffect(() => {
-    const unsubscribe = BackendMessagesService.setMessageHandler(
-      DisplayMessagesService.onMessageReceived,
-      id => navigation.navigate('Chat', {id, userId: AccountModel.id || ''}),
-    );
-    return unsubscribe;
+    // TODO: ВЕРНУТЬ ДЛЯ ПОЛУЧЕНИЯ СООБЩЕНИЙ!!!
+    // const unsubscribe = BackendMessagesService.setMessageHandler(
+    //   DisplayMessagesService.onMessageReceived,
+    //   id => navigation.navigate('Chat', {id, userId: AccountModel.id || ''}),
+    // );
+    // return unsubscribe;
   }, []);
 
   const chats = SearchChatsModel.searchQuery

@@ -1,10 +1,9 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import LoginStack from './stacks/LoginStack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {observer} from 'mobx-react-lite';
-import {RootStackParamList} from './navigation';
-import withAuthObserver from '../hoc/withAuthObserver';
+import {RootStackParamList} from './navigation.types';
 import AccountStack from './stacks/AccountStack';
 import AuthModel from '../models/mobx/AuthModel';
 import Main from './stacks/Main';
@@ -14,14 +13,16 @@ import commonStackStyles from './style/commonStackStyles';
 import useBackgroundColor from '@hooks/useBackgroundColor';
 import {useStyleSheet} from '@ui-kitten/components';
 import SettingsRight from './SettingsRight';
+import {useAuthObserver} from '@hooks/useAuthObserver';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootNavigationContainer: React.FC = () => {
   const backgroundColor = useBackgroundColor();
   const themed = useStyleSheet(commonStackStyles);
+  const {ref} = useAuthObserver();
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={ref}>
       <Stack.Navigator
         screenOptions={{
           header: () => <></>,
@@ -29,8 +30,8 @@ const RootNavigationContainer: React.FC = () => {
           animation: 'slide_from_right',
         }}
         initialRouteName={AuthModel.isAuthenticated ? 'Main' : 'Login'}>
-        <Stack.Screen name={'Login'} component={withAuthObserver(LoginStack)} />
-        <Stack.Screen name={'Main'} component={withAuthObserver(Main)} />
+        <Stack.Screen name={'Login'} component={LoginStack} />
+        <Stack.Screen name={'Main'} component={Main} />
         <Stack.Screen
           name={'Account'}
           options={{
@@ -38,11 +39,11 @@ const RootNavigationContainer: React.FC = () => {
             gestureDirection: 'horizontal',
             fullScreenGestureEnabled: true,
           }}
-          component={withAuthObserver(AccountStack)}
+          component={AccountStack}
         />
         <Stack.Screen
           name={'Settings'}
-          component={withAuthObserver(AccountSettingsScreen)}
+          component={AccountSettingsScreen}
           initialParams={{
             save: 0,
             valid: true,
